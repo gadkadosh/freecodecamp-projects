@@ -1,0 +1,7 @@
+.jumbotron {
+    transition: backgound-color 1.5s;
+}
+
+.blockquote p {
+    transition: color 2s 0.6s;
+}
