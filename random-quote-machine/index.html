@@ -11,12 +11,14 @@
 <body>
     <div class="container-fluid">
         <h1 class="text-center mt-5">Radom Quote Machine</h1>
-        <div class="jumbotron rounded m-5 text-center">
+        <div class="jumbotron rounded mx-5 my-4 text-center">
             <blockquote id="quote" class="blockquote">
                 <p>quote placeholder</p>
                 <footer class="blockquote-footer">source placeholder</footer>
             </blockquote>
-            <button id="get-quote" class="btn btn-primary"><i class="fa fa-refresh"></i> Fetch new quote</button>
+            <a id="get-quote" class="btn btn-primary mx-2 my-1" href="#"><i class="fa fa-refresh"></i> Fetch new quote!</a>
+            <a id="tweet-out" class="btn btn-primary mx-2 my-1" href="#"><i class="fa fa-twitter"></i> Tweet quote!</a>
+            <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
         </div>
     </div>
 

@@ -1,11 +1,22 @@
-jsonURL = "http://api.forismatic.com/api/1.0/"
+jsonURL = "https://api.forismatic.com/api/1.0/"
 jsonURL += "?method=getQuote&lang=en&format=jsonp&jsonp=?"
 
 const getQuote = url => {
     $.getJSON(url, json => {
-        $('#quote p').html(json.quoteText)
-        $('#quote .blockquote-footer').html(json.quoteAuthor)
+        updateQuote(json.quoteText, json.quoteAuthor)
+        updateTweetBtn(json.quoteText, json.quoteAuthor)
     })
+}
+
+const updateQuote = (quote, author) => {
+    $('#quote p').html(quote)
+    $('#quote .blockquote-footer').html(author)
+}
+
+const updateTweetBtn = (quote, author) => {
+    href = "https://twitter.com/intent/tweet"
+    href += "?text=Random-Quote-Machine: " + quote + " - " + author
+    $('#tweet-out').prop("href", href)
 }
 
 const randomColor = () => {
@@ -29,12 +40,13 @@ const randomColor = () => {
     rgbFooterStr = "rgb(" + footerColor[0] + ", " + footerColor[1] + ", " + footerColor[2] + ")"
     
     $('div.jumbotron').css("background-color", rgbBgStr)
-    $('div.jumbotron').css("color", rgbTextStr)
+    $('.blockquote p').css("color", rgbTextStr)
     $('.blockquote-footer').css("color", rgbFooterStr)
 }
 
 $(document).ready(() => {
-    getQuote(jsonURL)
+    quote = getQuote(jsonURL)
+    console.log(quote)
     randomColor()
     $('#get-quote').on('click', () => {
         getQuote(jsonURL)
