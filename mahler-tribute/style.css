@@ -1,0 +1,23 @@
+h1 {
+    font-size: 3.8rem;
+    font-weight: normal;
+    font-family: serif;
+}
+
+h2 {
+    font-size: 1.6rem;
+    font-family: serif;
+}
+
+h3 {
+    font-family: serif;
+}
+
+a:hover {
+    text-decoration: none;
+    color: navy;
+}
+
+.bg-green {
+    background-color: #869E86;
+}

@@ -1,0 +1,19 @@
+body {
+    position: relative;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.social-link {
+    font-size: 2.6rem;
+  }
+
+.color-lightred {
+    color: #CA445D;
+}
+
+.bg-pink {
+    background-color: #DA99A6;
+}
