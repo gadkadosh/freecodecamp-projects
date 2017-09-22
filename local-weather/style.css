@@ -1,0 +1,19 @@
+a:hover {
+    text-decoration: none;
+}
+
+#unit .unit-select {
+    color: blue;
+}
+
+.unit-select:hover {
+    cursor: pointer;
+}
+
+#unit .active {
+    color: black;
+}
+
+#unit .active:hover {
+    cursor: default;
+}
