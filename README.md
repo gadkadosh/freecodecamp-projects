@@ -6,4 +6,5 @@ These are my FreeCodeCamp Projects.
 * **My Portfolio Page**, HTML + Bootstrap
 
 ## Intermediate Frontend Development Projects
-* **Random Quote Machine**, uses ajax calls to get a random quote from a public API
+* **Random Quote Machine**, uses JSON api calls to get a random quote from a public API
+* **Local Weather**, uses jQuery and JSON api calls as well as HTML5 geolocation to show weahter for your location

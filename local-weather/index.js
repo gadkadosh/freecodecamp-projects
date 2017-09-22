@@ -32,19 +32,26 @@ const updateWeatherFromYahoo = json => {
 const fahToCel = deg => Math.round(deg * 9 / 5 + 32)
 
 const updateWeatherFromFcc = json => {
-    // console.log(json)
+    console.log(json)
     weatherData.city = json.name
     weatherData.country = json.sys.country
-    weatherData.summary = json.weather.description
+    weatherData.summary = json.weather[0].description
     weatherData.temperature = Math.round(json.main.temp)
+    weatherData.icon = json.weather[0].icon
 
-    updateHtml(weatherData.city, weatherData.country, weatherData.summary, weatherData.temperature)
+    updateHtml(weatherData.city, weatherData.country,
+        weatherData.summary, weatherData.temperature, weatherData.icon)
 }
 
-const updateHtml = (city, country, summary, temperature) => {
+const updateHtml = (city, country, summary, temperature, icon) => {
     const tempUnits = showCel ? '&#8451' : '&#8457'
     $('#location').html(`The weather in ${city}, ${country} is`)
-    $('#summary').html(summary)
+    
+    const summaryHtml = icon 
+        ? `<img id="weather-icon" src="${icon}" alt="${summary}">${summary}`
+        : `${summary}`
+    
+    $('#summary').html(summaryHtml)
     temperature = showCel ? temperature : fahToCel(temperature)
     $('#temperature').html("Temperature: " + temperature +
         '<small class="align-top">' + tempUnits + '</small>')
