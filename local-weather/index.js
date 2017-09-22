@@ -32,7 +32,7 @@ const updateWeatherFromYahoo = json => {
 const fahToCel = deg => Math.round(deg * 9 / 5 + 32)
 
 const updateWeatherFromFcc = json => {
-    console.log(json)
+    // console.log(json)
     weatherData.city = json.name
     weatherData.country = json.sys.country
     weatherData.summary = json.weather[0].description
@@ -82,7 +82,7 @@ $('document').ready(() => {
             } else {
                 showCel = false
             }
-            console.log(showCel)
+            // console.log(showCel)
             updateHtml(weatherData.city, weatherData.country,
                 weatherData.summary, weatherData.temperature, weatherData.icon)
         }
