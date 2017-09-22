@@ -48,13 +48,13 @@ const updateHtml = (city, country, summary, temperature, icon) => {
     $('#location').html(`The weather in ${city}, ${country} is`)
     
     const summaryHtml = icon 
-        ? `<img id="weather-icon" src="${icon}" alt="${summary}">${summary}`
+        ? `<img id="weather-icon" class="mx-3" src="${icon}" alt="${summary}">${summary}`
         : `${summary}`
-    
     $('#summary').html(summaryHtml)
     temperature = showCel ? temperature : fahToCel(temperature)
-    $('#temperature').html("Temperature: " + temperature +
-        '<small class="align-top">' + tempUnits + '</small>')
+    const tempHtml = 
+        `Temperature: <span class="text-largest mx-4">${temperature}<small class="align-top">${tempUnits}</small></span>`
+    $('#temperature').html(tempHtml)
 }
 
 $('document').ready(() => {
@@ -84,7 +84,7 @@ $('document').ready(() => {
             }
             console.log(showCel)
             updateHtml(weatherData.city, weatherData.country,
-                weatherData.summary, weatherData.temperature)
+                weatherData.summary, weatherData.temperature, weatherData.icon)
         }
     })
 })
