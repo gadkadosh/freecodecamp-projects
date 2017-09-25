@@ -1,0 +1,15 @@
+a:hover {
+    text-decoration: none;
+}
+
+.font-smaller {
+    font-size: 0.9rem;
+}
+
+.font-largest {
+    font-size: 2.4rem;
+}
+
+.pointer-cursor {
+    cursor: pointer;
+}
