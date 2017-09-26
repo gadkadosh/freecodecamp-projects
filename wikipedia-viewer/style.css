@@ -3,7 +3,7 @@ a:hover {
 }
 
 .font-smaller {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .font-largest {
@@ -12,4 +12,25 @@ a:hover {
 
 .pointer-cursor {
     cursor: pointer;
+}
+
+.text-black {
+    color: black;
+}
+
+.hover-mute {
+    transition: transform 0.3s, color 0.2s;
+}
+
+.hover-mute:hover {
+    color: #6395C4;
+    transform: scale(1.5, 1.5)
+}
+
+.bg-orange {
+    background-color: #FFAE3D;
+}
+
+.bg-pink {
+    background-color: #FDA8A8;
 }
