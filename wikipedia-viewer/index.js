@@ -8,16 +8,15 @@ const showSearchForm = () => {
     })
 }
 
-const initiateSearch = keyword => {
-    keyword = typeof keyword === 'string' ? keyword : $('#input-search').val()
-
+const initiateSearch = (keyword, limit = 10) => {
     $.ajax({
         url: endpoint,
         data: {
             origin: "*",
             action: "opensearch",
             format: "json",
-            search: keyword
+            search: keyword,
+            limit: limit
         },
         success: showResults
     })
@@ -39,33 +38,44 @@ const showResults = json => {
                     <p class="font-weight-bold mb-0">${entry.title}</p>
                     <p class="font-smaller">${entry.description ? entry.description.slice(0, 140) + '...' : ''}</p>
                 </a></li>`) :
-        `<p>No results found! Please try again</p>`
+        `<p class="text-center mt-3">No results found! Please try again</p>`
     
     // console.log(resultsHtml)
 
     $('#search-window').fadeIn(400)
-    $('#search-results').html(resultsHtml.join(''))
+    if (Array.isArray(resultsHtml)) {
+        $('#search-results').html(resultsHtml.join(''))
+    } else {
+        $('#search-results').html(resultsHtml)
+        $('#btn-more').hide()
+    }
 }
 
 const resetState = () => {
     $('#search-form').fadeOut(200, () => 
         $('#search-window').fadeOut(200, () => 
-            $('#random-article-btn').fadeOut(200, () => $('#search-here, #random-article').fadeIn(500))))
+            $('#btn-random-article').fadeOut(200, () => $('#search-here, #random-article').fadeIn(500))))
     $('#input-search').val('')
+}
+
+const showMore = () => {
+    const currentLimit = $('#search-results li').length + 10
+    initiateSearch($('#input-search').val(), currentLimit)
 }
     
 $('document').ready(() => {
     $('#search-form').hide()
     $('#search-window').hide()
-    $('#random-article-btn').hide()
+    $('#btn-random-article').hide()
 
     $('#search-here').on('click', showSearchForm)
-    $('#btn-search').on('click', initiateSearch)
+    $('#btn-search').on('click', e => initiateSearch($('#input-search').val()))
     $('#btn-reset').on('click', resetState)
+    $('#btn-more').on('click', showMore)
 
     $('#input-search').on('keydown', e => {
         if (e.keyCode == 13) {
-            initiateSearch()
+            initiateSearch($('#input-search').val())
             e.preventDefault()
         } 
       });
