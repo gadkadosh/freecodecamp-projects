@@ -3,9 +3,9 @@
 const endpoint = "https://en.wikipedia.org/w/api.php"
 
 const showSearchForm = () => {
-    $('#search-here, #random-article').fadeOut(300, () => {
-        $('#search-form').fadeIn(400)
-    })
+    $('#search-here, #random-article').fadeOut(300, () =>
+        $('#search-form').fadeIn(400, () => $('#input-search').focus())
+    )
 }
 
 const initiateSearch = (keyword, limit = 10) => {
