@@ -62,11 +62,22 @@ const showMore = () => {
     const currentLimit = $('#search-results li').length + 10
     initiateSearch($('#input-search').val(), currentLimit)
 }
+
+const colorfulElement = (element, text) => {
+    const colorHtml = text.split('').map(c => {
+        const color = ['r', 'g', 'b'].map(x => Math.round(Math.random() * 255))
+        return `<span style="color: rgb(${color.join(',')})">${c}</span>`
+    })
+    element.html(colorHtml)
+}
     
 $('document').ready(() => {
     $('#search-form').hide()
     $('#search-window').hide()
     $('#btn-random-article').hide()
+
+    colorfulElement($('h1'), $('h1').html())
+    colorfulElement($('footer p'), $('footer p').html())
 
     $('#search-here').on('click', showSearchForm)
     $('#btn-search').on('click', e => initiateSearch($('#input-search').val()))
