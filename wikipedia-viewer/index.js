@@ -9,7 +9,6 @@ const showSearchForm = () => {
 }
 
 const initiateSearch = (keyword, limit = 10) => {
-    // $('#btn-search').html('<i class="fa fa-spinner fa-pulse"></i>')
     $('#btn-search i').removeClass('fa-search').addClass('fa-spinner fa-pulse')
     $('#btn-more i').addClass('fa-spinner fa-pulse')
 
@@ -31,7 +30,7 @@ const initiateSearch = (keyword, limit = 10) => {
 }
 
 const showResults = json => {
-    console.log(json)
+    // console.log(json)
 
     const allResults = json[1].map(x => ({ title: x }))
         .map((x, i) => Object.assign(x, { description: json[2][i] }))
@@ -46,10 +45,8 @@ const showResults = json => {
                     <p class="font-weight-bold mb-0">${entry.title}</p>
                     <p class="font-smaller">${entry.description ? entry.description.slice(0, 140) + '...' : ''}</p>
                 </a></li>`) :
-        `<p class="text-center mt-3">No results found! Please try again</p>`
+        `<p class="text-center mt-3">No results found!</p><p class="text-center">Please try again</p>`
     
-    // console.log(resultsHtml)
-
     $('#search-window').fadeIn(400)
     if (Array.isArray(resultsHtml)) {
         $('#search-results').html(resultsHtml.join(''))
@@ -57,8 +54,10 @@ const showResults = json => {
         $('#search-results').html(resultsHtml)
     }
 
-    if (!Array.isArray(resultsHtml) || !resultsHtml.length === 10) {
-        $('#btn-more').hide()
+    if (!Array.isArray(resultsHtml) || resultsHtml.length < 10 || resultsHtml.length > 49) {
+        $('#btn-more').fadeOut(200)
+    } else {
+        $('#btn-more').fadeIn(200)
     }
 
 }
