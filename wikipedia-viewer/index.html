@@ -20,14 +20,19 @@
                 <form class="m-4">
                     <p class="text-center">You may search for a wikipedia article or try your luck with a random one:</p>
                     <div class="form-group text-center">
-                        <i id="search-here" class="text-black hover-mute fa fa-search font-largest pointer-cursor mx-3"></i>
+                        <i id="search-here" class="text-black hover-mute fa fa-search font-largest cursor-pointer mx-3"></i>
                         <a id="random-article" href="https://en.wikipedia.org/wiki/Special:Random">
-                            <i class="text-black hover-mute fa fa-gift font-largest pointer-cursor mx-3"></i>
+                            <i class="text-black hover-mute fa fa-gift font-largest cursor-pointer mx-3"></i>
                         </a>
                     </div>
                     <div id="search-form" class="row form-group my-2">
                         <div class="col mx-0">
-                            <input type="text" id="input-search" class="form-control">
+                            <input type="text" id="input-search" class="form-control" autocomplete="off">
+                            <ul id="list-suggestions" class="list-unstyled border rounded position-absolute p-1 bg-white">
+                                <li class="dropdown-item">Action</li>
+                                <li class="dropdown-item">Another action</li>
+                                <li class="dropdown-item">Something else here</li>
+                            </ul>
                         </div>
                             <button id="btn-search" class="btn btn-primary mx-1" type="button">
                                 <i class="fa fa-search"></i></button>

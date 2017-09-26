@@ -8,7 +8,7 @@ const showSearchForm = () => {
     )
 }
 
-const initiateSearch = (keyword, limit = 10) => {
+const initiateSearch = (keyword, limit = 10, callback) => {
     $('#btn-search i').removeClass('fa-search').addClass('fa-spinner fa-pulse')
     $('#btn-more i').addClass('fa-spinner fa-pulse')
 
@@ -24,7 +24,7 @@ const initiateSearch = (keyword, limit = 10) => {
         success: json => {
             $('#btn-search i').removeClass('fa-spinner fa-pulse').addClass('fa-search')
             $('#btn-more i').removeClass('fa-spinner fa-pulse')
-            showResults(json)
+            callback(json)
         }
     })
 }
@@ -59,7 +59,6 @@ const showResults = json => {
     } else {
         $('#btn-more').fadeIn(200)
     }
-
 }
 
 const resetState = () => {
@@ -71,7 +70,31 @@ const resetState = () => {
 
 const showMore = () => {
     const currentLimit = $('#search-results li').length + 10
-    initiateSearch($('#input-search').val(), currentLimit)
+    initiateSearch($('#input-search').val(), currentLimit, showResults)
+}
+
+const inputChange = e => {
+    if (e.keyCode === 13 || e.keyCode === 27) return
+    const input = $('#input-search').val()
+    // console.log(input)
+    if (input.length > 2) {
+        initiateSearch(input, 6, showSuggestions)
+    } else {
+        $('#list-suggestions').hide()
+    }
+}
+
+const showSuggestions = json => {
+    // console.log(json)
+    if (json[1].length < 1) return;
+    const suggestions = json[1].map(x => 
+        `<li class="dropdown-item cursor-default">${x}</li>`)
+    $('#list-suggestions').show().html(suggestions)
+    $('.dropdown-item').on('click', e => {
+        $('#input-search').val($(e.currentTarget).html()).focus()
+        $('#list-suggestions').hide()
+        initiateSearch($('#input-search').val(), 10, showResults)
+    })
 }
 
 const colorfulElement = (element, text) => {
@@ -85,21 +108,22 @@ const colorfulElement = (element, text) => {
 $('document').ready(() => {
     $('#search-form').hide()
     $('#search-window').hide()
+    $('#list-suggestions').hide()
 
     colorfulElement($('h1'), $('h1').html())
     colorfulElement($('footer p'), $('footer p').html())
 
     $('#search-here').on('click', showSearchForm)
-    $('#btn-search').on('click', e => initiateSearch($('#input-search').val()))
+    $('#btn-search').on('click', e => initiateSearch($('#input-search').val(), 10, showResults))
     $('#btn-reset').on('click', resetState)
     $('#btn-more').on('click', showMore)
-
+    $('#input-search').on('keyup', inputChange)
     $('#input-search').on('keydown', e => {
-        if (e.keyCode == 13) {
-            initiateSearch($('#input-search').val())
+        if (e.keyCode === 13) {
+            initiateSearch($('#input-search').val(), 10, showResults)
             e.preventDefault()
-        } 
-      });
-
-    //   initiateSearch('Mozart')
+        } else if (e.keyCode === 27) {
+            $('#list-suggestions').hide()
+        }
+    });
 });

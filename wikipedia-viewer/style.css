@@ -10,8 +10,12 @@ a:hover {
     font-size: 2.4rem;
 }
 
-.pointer-cursor {
+.cursor-pointer {
     cursor: pointer;
+}
+
+.cursor-default {
+    cursor: default;
 }
 
 .text-black {
@@ -33,4 +37,9 @@ a:hover {
 
 .bg-pink {
     background-color: #FDA8A8;
+}
+
+.position-absolute {
+    position: absolute;
+    z-index: 10;
 }
