@@ -8,4 +8,4 @@ These are my FreeCodeCamp Projects.
 ## Intermediate Frontend Development Projects
 * **Random Quote Machine**, uses JSON api calls to get a random quote from a public API
 * **Local Weather**, uses jQuery and JSON api calls as well as HTML5 geolocation to show weahter for your location
-* **Wikipedia Viewer**, uses the wikipedia api for searching wikipedia entries
+* **Wikipedia Viewer**, uses the wikipedia api for searching wikipedia entries including showing suggestions while typing
