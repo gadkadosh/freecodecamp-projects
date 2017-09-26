@@ -9,6 +9,10 @@ const showSearchForm = () => {
 }
 
 const initiateSearch = (keyword, limit = 10) => {
+    // $('#btn-search').html('<i class="fa fa-spinner fa-pulse"></i>')
+    $('#btn-search i').removeClass('fa-search').addClass('fa-spinner fa-pulse')
+    $('#btn-more i').addClass('fa-spinner fa-pulse')
+
     $.ajax({
         url: endpoint,
         data: {
@@ -18,7 +22,11 @@ const initiateSearch = (keyword, limit = 10) => {
             search: keyword,
             limit: limit
         },
-        success: showResults
+        success: json => {
+            $('#btn-search i').removeClass('fa-spinner fa-pulse').addClass('fa-search')
+            $('#btn-more i').removeClass('fa-spinner fa-pulse')
+            showResults(json)
+        }
     })
 }
 
@@ -47,14 +55,18 @@ const showResults = json => {
         $('#search-results').html(resultsHtml.join(''))
     } else {
         $('#search-results').html(resultsHtml)
+    }
+
+    if (!Array.isArray(resultsHtml) || !resultsHtml.length === 10) {
         $('#btn-more').hide()
     }
+
 }
 
 const resetState = () => {
     $('#search-form').fadeOut(200, () => 
         $('#search-window').fadeOut(200, () => 
-            $('#btn-random-article').fadeOut(200, () => $('#search-here, #random-article').fadeIn(500))))
+            $('#search-here, #random-article').fadeIn(500)))
     $('#input-search').val('')
 }
 
@@ -74,7 +86,6 @@ const colorfulElement = (element, text) => {
 $('document').ready(() => {
     $('#search-form').hide()
     $('#search-window').hide()
-    $('#btn-random-article').hide()
 
     colorfulElement($('h1'), $('h1').html())
     colorfulElement($('footer p'), $('footer p').html())
