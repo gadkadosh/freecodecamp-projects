@@ -1,7 +1,33 @@
+a:hover {
+    text-decoration: none;
+    opacity: 0.6;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #AA2525;
+}
+
+.border-bottom:last-child {
+    border-bottom: none;
+}
+
 .text-largest {
     font-size: 1.4rem;
 }
 
 .text-larger {
     font-size: 1.2rem;
+}
+
+.bg-red {
+    background-color: #FF3939;
+}
+
+.hover-bg-light:hover {
+    background-color: #FF4A4A;
+    opacity: 0.9;
+}
+
+.rounded-strong {
+    border-radius: 10px;
 }

@@ -9,7 +9,7 @@ const fillItem = entry => {
     const name = entry.name
     const logo = entry.logo ? entry.logo : ''
     const bio = entry.bio ?
-        entry.bio.split(' ').slice(0, 7).join(' ') + '...' :
+        entry.bio.split(' ').slice(0, 12).join(' ') + '...' :
         ''
     const status = entry.live ? 
         `Channel live, ${entry.stream.viewers} viewers` :
@@ -17,13 +17,12 @@ const fillItem = entry => {
     const followers = entry.followers
 
     return (
-        `<li class="row border border-top-0 py-3">
-            <div class="col-4 text-larger"><a href="${entry.url}">
-                <img src="${logo}" alt="${name}" width="64px" class="mr-3">
+        `<li class="row border-bottom py-3 hover-bg-light">
+            <div class="col-12 col-sm-4  my-3 text-center text-larger"><a href="${entry.url}">
+                <img src="${logo}" alt="${name}" width="64px" class="mx-auto mb-3 d-block">
                 ${name}</a></div>
-            <div class="col-4"><p class="font-weight-bold">${status}</p>
+            <div class="col-12 col-sm-8 my-3 text-center text-sm-left"><p class="font-weight-bold">${status}</p>
                 <p>${bio}</p></div>
-            <div class="col-4"></div>
         </li>`
     )
 }

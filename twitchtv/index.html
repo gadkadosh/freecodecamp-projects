@@ -9,21 +9,20 @@
 </head>
 <body>
     <dev class="container-fluid">
-        <h1>Twitch.tv JSON API app</h1>
+        <h1 class="text-center">Twitch.tv JSON API app</h1>
         <dev class="row">
             <div class="col">
-                <form>
+                <form class="text-center my-4">
                     <input type="text" name="" id="search-bar" class="">
                 </form>
             </div>
         </dev>
         <dev class="row">
             <div class="col">
-                <ul id="channels-list" class="list-unstyled">
-                    <li class="row border border-top-0 text-largest py-3">
-                        <div class="col-4 font-weight-bold">Channel name</div>
-                        <div class="col-4 font-weight-bold">Channel status</div>
-                        <div class="col-4 font-weight-bold"></div>
+                <ul id="channels-list" class="list-unstyled bg-red rounded-strong px-5 mx-5">
+                    <li class="hover-bg-light row border-bottom text-center font-weight-bold text-largest py-3 d-md-flex d-none">
+                        <div class="col-4">Channel name</div>
+                        <div class="col-8">Channel status</div>
                     </li>
                 </ul>            
             </div>
