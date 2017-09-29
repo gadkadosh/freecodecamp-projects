@@ -9,17 +9,17 @@ const fillItem = entry => {
     const name = entry.name
     const logo = entry.logo ? entry.logo : ''
     const bio = entry.bio ?
-        entry.bio.split(' ').slice(0, 12).join(' ') + '...' :
+        entry.bio.split(' ').slice(0, 17).join(' ') + '...' :
         ''
     const followers = entry.followers
     const status = entry.live ? 
-        `<a href="${entry.url}" target="_blank">Channel live</a>` :
+        `<a href="${entry.url}" target="_blank">Channel live` :
         'Channel offline'
+    const preview = entry.live ?
+        `<img src="${entry.stream.preview.medium}" class="img-fluid"></a>` :
+        ''
     const viewers = entry.live ?
         `<p class="mt-3">${entry.stream.viewers} viewers</p>` :
-        ''
-    const preview = entry.live ?
-        `<img src="${entry.stream.preview.medium}" class="img-fluid">` :
         ''
 
     return (
@@ -42,8 +42,34 @@ const fillItem = entry => {
 
 const updateList = (listElem, data) => {
     console.log(data)
+    listElem.empty()
+    const header = 
+    `<li class="hover-bg-light row border-bottom text-center font-weight-bold text-largest py-3 d-md-flex d-none">
+        <div class="col-sm-3">Channel name</div>
+        <div class="col-sm-9">Channel status</div>
+    </li>`
     const list = data.map(fillItem)
-    listElem.append(list)
+    listElem.append(header, list)
+}
+
+const searchInput = (e, allData) => {
+    if (e.keyCode === 13) return
+
+    keyword = $('#search-bar').val().toLowerCase().trim()
+    const filtered = allData.filter(x => 
+        x.name && x.name.toLowerCase().includes(keyword) ||
+        x.bio && x.bio.toLowerCase().includes(keyword) ||
+        x.status && x.status.toLowerCase().includes(keyword)
+    )
+
+    listElem = $('#channels-list')
+    if (filtered.length > 0) {
+        updateList(listElem, filtered)
+    } else {
+        // console.log('no results!')
+        listElem.empty().html('<p class="text-center font-weight-bold py-4">No results!</p>')
+    }
+    console.log(e.keyCode, keyword, filtered)
 }
 
 $(document).ready(() => {
@@ -86,6 +112,10 @@ $(document).ready(() => {
     $.when.apply($, requests).then(() => {
         const allData = usersData.map((x, i) => Object.assign(x, streamsData[i], channelsData[i]))
         updateList($('#channels-list'), allData)
+
+        $('#search-bar').on('keyup', e => {
+            searchInput(e, allData)
+        })
     })
 
     
