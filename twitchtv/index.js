@@ -44,12 +44,13 @@ const updateList = (listElem, data) => {
     console.log(data)
     listElem.empty()
     const header = 
-    `<li class="hover-bg-light row border-bottom text-center font-weight-bold text-largest py-3 d-md-flex d-none">
-        <div class="col-sm-3">Channel name</div>
-        <div class="col-sm-9">Channel status</div>
-    </li>`
+        `<li class="hover-bg-light row border-bottom text-center font-weight-bold text-largest py-3 d-md-flex d-none">
+            <div class="col-sm-3">Channel name</div>
+            <div class="col-sm-9">Channel status</div>
+        </li>`
     const list = data.map(fillItem)
     listElem.append(header, list)
+    $('#list-options').show()
 }
 
 const searchInput = (e, allData) => {
@@ -66,10 +67,25 @@ const searchInput = (e, allData) => {
     if (filtered.length > 0) {
         updateList(listElem, filtered)
     } else {
-        // console.log('no results!')
+        // No results
         listElem.empty().html('<p class="text-center font-weight-bold py-4">No results!</p>')
+        $('#list-options').hide()
     }
     console.log(e.keyCode, keyword, filtered)
+}
+
+const switchOption = (e, allData) => {
+    // if has class active, return
+    $('#list-options .nav-link').removeClass('active')
+    $(e.currentTarget).addClass('active')
+    const newMode = $(e.currentTarget).html()
+    
+    const filtered = allData.filter(x => {
+        if (newMode === 'All') return true
+        else if (newMode === 'Live') return x.live
+        else if (newMode === 'Offline') return (!x.live)
+    })
+    // updateList($('#channels-list'), filtered)
 }
 
 $(document).ready(() => {
@@ -79,6 +95,12 @@ $(document).ready(() => {
         } else if(e.keyCode === 27) {
             $('#search-bar').val('')
         }
+    })
+
+    $('#list-options').hide()
+
+    $('#list-options .nav-link').on('click', (e) => {
+        switchOption(e, allData)
     })
 
     const userUrl = channels.map(channel => urlEndpoint + 'users/' + channel)
@@ -117,6 +139,4 @@ $(document).ready(() => {
             searchInput(e, allData)
         })
     })
-
-    
 })
