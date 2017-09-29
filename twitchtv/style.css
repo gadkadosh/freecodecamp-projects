@@ -1,5 +1,8 @@
 a:hover {
     text-decoration: none;
+}
+
+a:hover img {
     opacity: 0.6;
 }
 
@@ -20,14 +23,18 @@ a:hover {
 }
 
 .bg-red {
-    background-color: #FF3939;
+    background-color: #FF4A4A;
 }
 
 .hover-bg-light:hover {
-    background-color: #FF4A4A;
+    background-color: #FA4B4B;
     opacity: 0.9;
 }
 
 .rounded-strong {
     border-radius: 10px;
+}
+
+.text-break-word {
+    overflow-wrap: break-word;
 }
