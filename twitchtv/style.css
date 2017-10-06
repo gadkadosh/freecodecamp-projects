@@ -3,7 +3,7 @@ a:hover {
 }
 
 a:hover img {
-    opacity: 0.6;
+    opacity: 0.9;
 }
 
 .border-bottom {
@@ -39,10 +39,18 @@ a:hover img {
     overflow-wrap: break-word;
 }
 
-/* .nav-link {
-    background-color: #E7E78C;
+.search-bg-icon:after {
+    content: "\f002";
+    font-family: FontAwesome;
+    position: absolute;
+    font-size: 20px;
+    color: lightblue;
+    top: 26px;
+    left: 26px;
+    z-index: 1;
 }
 
-.nav-pills .nav-link.active {
-    background-color: #AA13AA;
-} */
+.px-search {
+    padding-left: 36px;
+    padding-right: 36px;
+}

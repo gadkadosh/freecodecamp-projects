@@ -2,7 +2,8 @@
 
 const urlEndpoint = 'https://wind-bow.glitch.me/twitch-api/'
 // const channels = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
-const channels = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "habathcx", "RobotCaleb", "noobs2ninjas"]
+// const channels = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "habathcx", "RobotCaleb", "noobs2ninjas"]
+const channels = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "habathcx", "RobotCaleb", "noobs2ninjas", "lirik", "ddahyoni", "stryfo"]
 
 const fillItem = entry => {
     // console.log(entry)
@@ -13,10 +14,10 @@ const fillItem = entry => {
         ''
     const followers = entry.followers
     const status = entry.live ? 
-        `<a href="${entry.url}" target="_blank">Channel live` :
+        `<a class="font-weight-bold" href="${entry.url}" target="_blank">Channel live` :
         'Channel offline'
     const preview = entry.live ?
-        `<img src="${entry.stream.preview.medium}" class="img-fluid"></a>` :
+        `<img src="${entry.stream.preview.medium}" class="img-fluid mt-3"></a>` :
         ''
     const viewers = entry.live ?
         `<p class="mt-3">${entry.stream.viewers} viewers</p>` :
@@ -32,7 +33,7 @@ const fillItem = entry => {
                 <p class="text-break-word">${bio}</p>
                 <p class="font-weight-bold">${followers} followers</p></div>
             <div class="col-12 col-sm-4 align-self-center text-center">
-                <p class="font-weight-bold">${status}</p>
+                ${status}
                 ${preview}
                 ${viewers}
             </div>
@@ -56,11 +57,14 @@ const updateList = (listElem, data) => {
 const searchInput = (e, allData) => {
     if (e.keyCode === 13) return
 
-    keyword = $('#search-bar').val().toLowerCase().trim()
+    keywords = $('#search-bar').val().toLowerCase().trim().split(' ')
     const filtered = allData.filter(x => 
-        x.name && x.name.toLowerCase().includes(keyword) ||
-        x.bio && x.bio.toLowerCase().includes(keyword) ||
-        x.status && x.status.toLowerCase().includes(keyword)
+        x.name && keywords.every(word => 
+            x.name.toLowerCase().includes(word)) ||
+        x.bio && keywords.every(word => 
+            x.bio.toLowerCase().includes(word)) ||
+        x.status && keywords.every(word => 
+            x.status.toLowerCase().includes(word))
     )
 
     listElem = $('#channels-list')
@@ -71,7 +75,7 @@ const searchInput = (e, allData) => {
         listElem.empty().html('<p class="text-center font-weight-bold py-4">No results!</p>')
         $('#list-options').hide()
     }
-    console.log(e.keyCode, keyword, filtered)
+    console.log(e.keyCode, keywords, filtered)
 }
 
 const switchOption = (e, allData) => {
@@ -99,7 +103,7 @@ $(document).ready(() => {
 
     $('#list-options').hide()
 
-    $('#list-options .nav-link').on('click', (e) => {
+    $('#list-options .nav-link').on('click', (e, allData) => {
         switchOption(e, allData)
     })
 

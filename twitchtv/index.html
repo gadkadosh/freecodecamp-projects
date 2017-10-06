@@ -5,28 +5,31 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Twitch.tv JSON API app</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <dev class="container-fluid">
         <h1 class="text-center">Twitch.tv JSON API app</h1>
         <dev class="row">
-            <div class="col">
+            <div class="col-8 col-sm-4 col-lg-3 mx-auto">
                 <form class="text-center my-4">
-                    <input type="text" id="search-bar" placeholder="Search" autocomplete="off">
+                    <div class="search-bg-icon">
+                        <input type="text" id="search-bar" class="form-control px-search" placeholder="Search..." autocomplete="off">
+                    </div>
                 </form>
             </div>
         </dev>
         <div class="row">
-            <div class="col col-lg-9 x-auto">
+            <div class="col col-lg-9 mx-auto">
                 <ul id="list-options" class="nav navbar navbar-light nav-pills justify-content-center">
-                    <li class="nav-item">
+                    <li class="nav-item mx-3">
                         <a class="nav-link active" href="#">All</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item mx-3">
                         <a class="nav-link" href="#">Live</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item mx-3">
                         <a class="nav-link" href="#">Offline</a>
                     </li>
                 </ul>
