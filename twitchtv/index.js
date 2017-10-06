@@ -42,7 +42,7 @@ const fillItem = entry => {
 }
 
 const updateList = (listElem, data) => {
-    console.log(data)
+    // console.log(data)
     listElem.empty()
     const header = 
         `<li class="hover-bg-light row border-bottom text-center font-weight-bold text-largest py-3 d-md-flex d-none">
@@ -75,22 +75,24 @@ const searchInput = (e, allData) => {
         listElem.empty().html('<p class="text-center font-weight-bold py-4">No results!</p>')
         $('#list-options').hide()
     }
-    console.log(e.keyCode, keywords, filtered)
+    // console.log(e.keyCode, keywords, filtered)
 }
 
-const switchOption = (e, allData) => {
+const switchOption = (e, data) => {
     // if has class active, return
     $('#list-options .nav-link').removeClass('active')
     $(e.currentTarget).addClass('active')
     const newMode = $(e.currentTarget).html()
     
-    const filtered = allData.filter(x => {
+    const filtered = data.filter(x => {
         if (newMode === 'All') return true
         else if (newMode === 'Live') return x.live
         else if (newMode === 'Offline') return (!x.live)
     })
-    // updateList($('#channels-list'), filtered)
+    updateList($('#channels-list'), filtered)
 }
+
+let allData = []
 
 $(document).ready(() => {
     $('#search-bar').on('keydown', e => {
@@ -103,7 +105,7 @@ $(document).ready(() => {
 
     $('#list-options').hide()
 
-    $('#list-options .nav-link').on('click', (e, allData) => {
+    $('#list-options .nav-link').on('click', e => {
         switchOption(e, allData)
     })
 
@@ -136,7 +138,7 @@ $(document).ready(() => {
 
 
     $.when.apply($, requests).then(() => {
-        const allData = usersData.map((x, i) => Object.assign(x, streamsData[i], channelsData[i]))
+        allData = usersData.map((x, i) => Object.assign(x, streamsData[i], channelsData[i]))
         updateList($('#channels-list'), allData)
 
         $('#search-bar').on('keyup', e => {
