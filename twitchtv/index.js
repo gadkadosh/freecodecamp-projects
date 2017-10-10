@@ -13,7 +13,7 @@ const fillItem = entry => {
         entry.bio.split(' ').slice(0, 17).join(' ') + '...' :
         ''
     const followers = entry.followers
-    const status = entry.live ? 
+    const status = entry.live ?
         `<a class="font-weight-bold" href="${entry.url}" target="_blank">Channel live` :
         'Channel offline'
     const preview = entry.live ?
@@ -44,7 +44,7 @@ const fillItem = entry => {
 const updateList = (listElem, data) => {
     // console.log(data)
     listElem.empty()
-    const header = 
+    const header =
         `<li class="hover-bg-light row border-bottom text-center font-weight-bold text-largest py-3 d-md-flex d-none">
             <div class="col-sm-3">Channel name</div>
             <div class="col-sm-9">Channel status</div>
@@ -54,45 +54,31 @@ const updateList = (listElem, data) => {
     $('#list-options').show()
 }
 
-const searchInput = (e, allData) => {
-    if (e.keyCode === 13) return
-
-    keywords = $('#search-bar').val().toLowerCase().trim().split(' ')
-    const filtered = allData.filter(x => 
-        x.name && keywords.every(word => 
+const filterKeywords = (keywords, allData) => {
+    const filtered = allData.filter(x =>
+        x.name && keywords.every(word =>
             x.name.toLowerCase().includes(word)) ||
-        x.bio && keywords.every(word => 
+        x.bio && keywords.every(word =>
             x.bio.toLowerCase().includes(word)) ||
-        x.status && keywords.every(word => 
+        x.status && keywords.every(word =>
             x.status.toLowerCase().includes(word))
     )
 
-    listElem = $('#channels-list')
-    if (filtered.length > 0) {
-        updateList(listElem, filtered)
-    } else {
-        // No results
-        listElem.empty().html('<p class="text-center font-weight-bold py-4">No results!</p>')
-        $('#list-options').hide()
-    }
-    // console.log(e.keyCode, keywords, filtered)
+    return filtered
 }
 
-const switchOption = (e, data) => {
-    // if has class active, return
-    $('#list-options .nav-link').removeClass('active')
-    $(e.currentTarget).addClass('active')
-    const newMode = $(e.currentTarget).html()
-    
+const filterOption = (newMode, data) => {
     const filtered = data.filter(x => {
         if (newMode === 'All') return true
         else if (newMode === 'Live') return x.live
         else if (newMode === 'Offline') return (!x.live)
     })
-    updateList($('#channels-list'), filtered)
+    return filtered
 }
 
 let allData = []
+let mode = 'All'
+let keywords = []
 
 $(document).ready(() => {
     $('#search-bar').on('keydown', e => {
@@ -106,7 +92,13 @@ $(document).ready(() => {
     $('#list-options').hide()
 
     $('#list-options .nav-link').on('click', e => {
-        switchOption(e, allData)
+        // if has class return
+        $('#list-options .nav-link').removeClass('active')
+        $(e.currentTarget).addClass('active')
+        mode = $(e.currentTarget).html()
+
+        const filtered = filterKeywords(keywords, filterOption(mode, allData))
+        updateList($('#channels-list'), filtered)
     })
 
     const userUrl = channels.map(channel => urlEndpoint + 'users/' + channel)
@@ -117,12 +109,12 @@ $(document).ready(() => {
             logo: data.logo,
             bio: data.bio
         }))
-    
+
     const streamUrls = channels.map(channel => urlEndpoint + 'streams/' + channel)
     const streamsData = []
     requests = requests.concat(streamUrls.map((url, index) => $.getJSON(url)
-        .then(data => 
-            data.stream ? 
+        .then(data =>
+            data.stream ?
                 streamsData[index] = {live: true, stream: data.stream} :
                 streamsData[index] = {live: false}
         )))
@@ -142,7 +134,17 @@ $(document).ready(() => {
         updateList($('#channels-list'), allData)
 
         $('#search-bar').on('keyup', e => {
-            searchInput(e, allData)
+            if (e.keyCode === 13) return
+            keywords = $('#search-bar').val().toLowerCase().trim().split(' ')
+
+            const filtered = filterKeywords(keywords, filterOption(mode, allData))
+            const listElem = $('#channels-list')
+
+            if (filtered.length === 0) {
+                listElem.empty().html('<p class="text-center font-weight-bold py-4">No results!</p>')
+                $('#list-options').hide()
+            }
+            updateList(listElem, filtered)
         })
     })
 })
