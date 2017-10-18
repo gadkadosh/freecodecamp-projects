@@ -1,0 +1,62 @@
+body {
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.container {
+    display: inline-block;
+    background-color: rgb(207, 149, 48);
+    border: 1px solid #777;
+}
+
+.row {
+    /* display: inline-block; */
+    font-size: 0;
+}
+
+.display {
+    height: 80px;
+    background-color: aqua;
+}
+
+.btn {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    font-size: 1.2rem;
+}
+
+.btn-double {
+    width: 161px;
+}
+
+.btn-border {
+    border-top: 1px solid #555;
+    border-left: 1px solid #555;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.btn-border:first-child {
+    border-left: 0;
+}
+
+.btn-border:last-child {
+    /* border-right: 1px solid #555; */
+}
+
+.row:last-child .btn-border {
+    /* border-bottom: 1px solid #555; */
+}
+
+.btn-digit {
+    background-color: #eee;
+}
+
+.btn-operator {
+    background-color: violet;
+}
+
+.btn-action {
+    background-color: rgb(192, 57, 192);
+}
