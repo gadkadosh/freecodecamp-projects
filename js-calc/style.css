@@ -10,13 +10,14 @@ body {
 }
 
 .row {
-    /* display: inline-block; */
     font-size: 0;
 }
 
 .display {
     height: 80px;
     background-color: aqua;
+    font-size: 70px;
+    text-align: right;
 }
 
 .btn {
