@@ -41,7 +41,7 @@ const calculator = {
         if (this.currentNumber === 0) {
             this.currentNumber = digit
         } else {
-        console.log(digit)
+        // console.log(digit)
             this.currentNumber = String(this.currentNumber) + String(digit)
             // this.currentNumber = String(this.currentNumber) + String(digit)
         }
@@ -67,14 +67,35 @@ const calculator = {
         } else if (this.lastInput === 'operation') {
             this.operations.pop()
         }
+        if (this.operations.length > 0) this. calculate()
         this.operations.push(operationsKey[strOperation].fn)
         this.lastInput = 'operation'
     },
 
     calculate: function() {
-        const answer = this.numbers.reduce((acc, x, i, all) =>
-            this.operations[i - 1](acc, x))
+
+        // Reduce the array by performing first multiplication and division
+        numbersCopy = this.numbers.slice()
+        operationsCopy = this.operations.slice()
+
+        let i = 0;
+        while (i < operationsCopy.length) {
+            if (operationsCopy[i] === operationsKey.multiply.fn ||
+                operationsCopy[i] === operationsKey.divide.fn) {
+                numbersCopy[i] = this.operations[i](numbersCopy[i], numbersCopy[i + 1])
+                numbersCopy.splice(i + 1, 1)
+                operationsCopy.splice(i, 1)
+                console.log(operationsCopy, numbersCopy)
+            } else {
+                i++
+            }
+        }
+
+        // Reduce further the rest of the operations
+        const answer = numbersCopy.reduce((acc, x, i, all) =>
+            operationsCopy[i - 1](acc, x))
         this.updateDisplay(answer)
+
         return answer
     },
 
