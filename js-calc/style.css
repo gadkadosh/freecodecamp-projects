@@ -16,8 +16,15 @@ body {
 .display {
     height: 80px;
     background-color: aqua;
-    font-size: 70px;
+    font-size: 60px;
     text-align: right;
+}
+
+.operation-display {
+    height: 16px;
+    background-color: aqua;
+    font-size: 16px;
+    text-align: left;
 }
 
 .btn {
@@ -32,8 +39,8 @@ body {
 }
 
 .btn-border {
-    border-top: 1px solid #555;
-    border-left: 1px solid #555;
+    border-top: 1px solid #888;
+    border-left: 1px solid #888;
     border-right: 0;
     border-bottom: 0;
 }
@@ -54,7 +61,7 @@ body {
     background-color: #eee;
 }
 
-.btn-operator {
+.btn-eq, .btn-operator {
     background-color: violet;
 }
 
