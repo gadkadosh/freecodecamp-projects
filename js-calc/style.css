@@ -20,11 +20,16 @@ body {
     text-align: right;
 }
 
-.operation-display {
+.history-display {
     height: 16px;
     background-color: aqua;
     font-size: 16px;
     text-align: left;
+}
+
+.px-2 {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .btn {

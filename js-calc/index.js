@@ -22,7 +22,7 @@ const operationsKey = {
 const calculator = {
 
     displayElem: document.getElementById('display'),
-    operationDisplayElem: document.getElementById('operation-display'),
+    histDisplayElem: document.getElementById('history-display'),
     currentNumber: 0,
     lastInput: '',
     numbers: [],
@@ -67,16 +67,16 @@ const calculator = {
         } else if (this.lastInput === 'operation') {
             this.operations.pop()
         }
-        if (this.operations.length > 0) this. calculate()
         this.operations.push(operationsKey[strOperation].fn)
+        // if (this.operations.length > 1)
+        this.calculate()
         this.lastInput = 'operation'
     },
 
     calculate: function() {
-
         // Reduce the array by performing first multiplication and division
         numbersCopy = this.numbers.slice()
-        operationsCopy = this.operations.slice()
+        operationsCopy = this.operations.slice(0, numbersCopy.length - 1)
 
         let i = 0;
         while (i < operationsCopy.length) {
@@ -102,9 +102,25 @@ const calculator = {
     updateDisplay: function(num) {
         num = num || this.currentNumber
         this.displayElem.innerText = String(num)
-        const lastOperation = this.operations[this.operations.length - 1]
-        const symbol = operationsKey[lastOperation]
-        this.operationDisplayElem.innerText = symbol || ''
+        this.updateHistDisplay()
+    },
+
+    updateHistDisplay: function() {
+
+        const history = this.numbers.reduce((acc, num, i) => {
+            return acc.concat(num, this.getSymbol(this.operations[i]) || '')
+        }, [])
+
+        this.histDisplayElem.innerText = history.join(' ')
+    },
+
+    getSymbol: function(operationFn) {
+        return symbol = Object.keys(operationsKey).reduce((acc, val) => {
+            if (operationsKey[val].fn === operationFn) {
+                return operationsKey[val].symbol
+            }
+            return acc
+        }, undefined)
     }
 }
 
