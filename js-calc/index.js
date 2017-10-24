@@ -37,7 +37,8 @@ const calculator = {
     },
 
     addDigit: function(digit, number) {
-        if (this.lastInput === 'equal') this.reset()
+        if (this.lastInput === "equal") this.reset()
+        else if (this.lastInput === "operation") this.currentNumber = 0
         number = typeof number !== "undefined" ? number : this.currentNumber
         // console.log(digit, number)
         if (String(number).length >= 8) return number
@@ -49,7 +50,7 @@ const calculator = {
         this.currentNumber = number
         // console.log(digit, number)
         this.updateDisplay()
-        this.lastInput = 'digit'
+        this.lastInput = "digit"
         return number
     },
 
@@ -66,49 +67,61 @@ const calculator = {
         numbers = typeof numbers !== "undefined" ? numbers : this.numbers
         numbers.push(newNumber)
         this.numbers = numbers
-        this.currentNumber = 0
         return numbers
         // don't update display, when clicking an operation button the currentNumber stays displayed
     },
 
     setOperation: function (strOperation, operations) {
         operations = typeof operations !== "undefined" ? operations : this.operations
-        if (this.lastInput === 'digit') {
+        if (this.lastInput === "digit") {
             this.saveNumber()
-        } else if (this.lastInput === 'operation') {
+        } else if (this.lastInput === "operation") {
             operations.pop()
         }
         operations.push(operationsKey[strOperation].fn)
         this.operations = operations
         this.calculate()
-        this.lastInput = 'operation'
+        this.lastInput = "operation"
         return operations
     },
 
-    calculate: function() {
+    calculate: function(numbers, operations) {
+        numbers = typeof numbers !== "undefined" ? numbers : this.numbers
+        operations = typeof operations !== "undefined" ? operations : this.operations
+
         // Reduce the array by performing first multiplication and division
-        numbersCopy = this.numbers.slice()
-        // operationsCopy = this.operations.slice()
-        operationsCopy = this.operations.slice(0, numbersCopy.length - 1)
-        // console.log(operationsCopy, numbersCopy)
+        const numbersCopy = numbers.slice()
+        // const numbersCopy = numbers
+        const operationsCopy = operations.slice(0, numbersCopy.length - 1)
+        // console.log('copy:', operationsCopy.slice(), numbersCopy.slice())
+        // make sure we have the correct proportion of numbers and opertaions
+        // const operationsCopy = operations.slice(0, numbersCopy.length)
 
         let i = 0;
         while (i < operationsCopy.length) {
             if (
-                // operationsCopy[i] === operationsKey.multiply.fn ||
+                operationsCopy[i] === operationsKey.multiply.fn ||
                 operationsCopy[i] === operationsKey.divide.fn) {
-                numbersCopy[i] = this.operations[i](numbersCopy[i], numbersCopy[i + 1])
+                // console.log('found:', operationsCopy[i], numbersCopy[i],numbersCopy[i + 1],
+                // operationsCopy[i](numbersCopy[i], numbersCopy[i + 1]))
+                numbersCopy[i] = operationsCopy[i](numbersCopy[i], numbersCopy[i + 1])
+                // console.log('during:', i, operationsCopy.slice(), numbersCopy.slice())
                 numbersCopy.splice(i + 1, 1)
                 operationsCopy.splice(i, 1)
+                // console.log('during:', i, operationsCopy.slice(), numbersCopy.slice())
+
             } else {
                 i++
             }
         }
+        // console.log('after:', operationsCopy.slice(), numbersCopy.slice())
 
         // Reduce further the rest of the operations
         const answer = numbersCopy.reduce((acc, x, i, all) =>
             operationsCopy[i - 1](acc, x))
         this.updateDisplay(answer)
+
+        // console.log(answer)
 
         return answer
     },
@@ -128,13 +141,17 @@ const calculator = {
         this.histDisplayElem.innerText = history.join(' ')
     },
 
-    getSymbol: function(operationFn) {
+    getSymbol: function (operationFn) {
         return symbol = Object.keys(operationsKey).reduce((acc, val) => {
             if (operationsKey[val].fn === operationFn) {
                 return operationsKey[val].symbol
             }
             return acc
         }, undefined)
+    },
+
+    justFunc: function(arr) {
+            console.log(arr)
     }
 }
 
@@ -268,4 +285,37 @@ function testCalc() {
     console.log(testSetOperation4)
 
     // calculate
+    console.log("calculate test")
+    const testCalculate1 = calculator.calculate([3, 4], [operationsKey.add.fn]) === 7 ? 'success' : 'fail'
+    console.log(testCalculate1)
+    const testCalculate2 = calculator.calculate([3, 4], [operationsKey.subtract.fn]) === -1 ? 'success' : 'fail'
+    console.log(testCalculate2)
+    const testCalculate3 = calculator.calculate([3, 4], [operationsKey.multiply.fn]) === 12 ? 'success' : 'fail'
+    console.log(testCalculate3)
+    const testCalculate4 = calculator.calculate([3, 4], [operationsKey.divide.fn]) === 0.75 ? 'success' : 'fail'
+    console.log(testCalculate4)
+    const testCalculate5 = calculator.calculate([0, 3, 4], [operationsKey.multiply.fn, operationsKey.add.fn]) === 4 ? 'success' : 'fail'
+    console.log(testCalculate5)
+    const testCalculate6 = calculator.calculate([0, 3, 4], [operationsKey.subtract.fn, operationsKey.add.fn]) === 1 ? 'success' : 'fail'
+    console.log(testCalculate6)
+    const testCalculate7 = calculator.calculate([0, 3, 4], [operationsKey.subtract.fn, operationsKey.multiply.fn]) === -12 ? 'success' : 'fail'
+    console.log(testCalculate7)
+    const testCalculate8 = calculator.calculate([1, 3, 4], [operationsKey.subtract.fn, operationsKey.divide.fn]) === 0.25 ? 'success' : 'fail'
+    console.log(testCalculate8)
+    const testCalculate9 = calculator.calculate([4, 3, 2, 1], [operationsKey.add.fn, operationsKey.multiply.fn, operationsKey.multiply.fn, operationsKey.subtract.fn]) === 10 ? 'success' : 'fail'
+    console.log(testCalculate9)
+    const testCalculate10 = calculator.calculate([4, 3, 2, 1], [operationsKey.multiply.fn, operationsKey.add.fn, operationsKey.subtract.fn]) === 13 ? 'success' : 'fail'
+    console.log(testCalculate10)
+    const testCalculate11 = calculator.calculate([4, 3, 2, 1], [operationsKey.multiply.fn, operationsKey.divide.fn, operationsKey.subtract.fn]) === 5 ? 'success' : 'fail'
+    console.log(testCalculate11)
+    const testCalculate12 = calculator.calculate([4, 3, 2, 1], [operationsKey.add.fn, operationsKey.multiply.fn, operationsKey.subtract.fn]) === 9 ? 'success' : 'fail'
+    console.log(testCalculate12)
+    const testCalculate13 = calculator.calculate([4, 3, 2, 1], [operationsKey.add.fn, operationsKey.divide.fn, operationsKey.multiply.fn]) === 5.5 ? 'success' : 'fail'
+    console.log(testCalculate13)
+    const testCalculate14 = calculator.calculate([3, 4, 2, 1], [operationsKey.divide.fn, operationsKey.subtract.fn, operationsKey.multiply.fn]) === -1.25 ? 'success' : 'fail'
+    console.log(testCalculate14)
+    const testCalculate15 = calculator.calculate([4, 3, 2, 1], [operationsKey.multiply.fn, operationsKey.divide.fn, operationsKey.divide.fn]) === 6 ? 'success' : 'fail'
+    console.log(testCalculate15)
+    const testCalculate16 = calculator.calculate([4, 3, 2, 1], [operationsKey.subtract.fn, operationsKey.divide.fn, operationsKey.divide.fn]) === 2.5 ? 'success' : 'fail'
+    console.log(testCalculate16)
 }
