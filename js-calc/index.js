@@ -23,6 +23,7 @@ const calculator = {
 
     displayElem: document.getElementById('display'),
     histDisplayElem: document.getElementById('history-display'),
+    resetBtnElem: document.getElementById('ac-btn'),
     currentNumber: 0,
     lastInput: '',
     numbers: [],
@@ -33,6 +34,11 @@ const calculator = {
         this.currentNumber = 0
         this.numbers = []
         this.operations = []
+        this.updateDisplay()
+    },
+
+    resetDisplay: function() {
+        this.currentNumber = 0
         this.updateDisplay()
     },
 
@@ -86,42 +92,29 @@ const calculator = {
     },
 
     calculate: function(numbers, operations) {
-        numbers = typeof numbers !== "undefined" ? numbers : this.numbers
-        operations = typeof operations !== "undefined" ? operations : this.operations
+        numbers = typeof numbers !== "undefined" ? numbers : this.numbers.slice()
+        // make sure we have the correct proportion of numbers and opertaions
+        operations = typeof operations !== "undefined" ? operations : this.operations.slice(0, numbers.length - 1)
 
         // Reduce the array by performing first multiplication and division
-        const numbersCopy = numbers.slice()
-        // const numbersCopy = numbers
-        const operationsCopy = operations.slice(0, numbersCopy.length - 1)
-        // console.log('copy:', operationsCopy.slice(), numbersCopy.slice())
-        // make sure we have the correct proportion of numbers and opertaions
-        // const operationsCopy = operations.slice(0, numbersCopy.length)
 
         let i = 0;
-        while (i < operationsCopy.length) {
+        while (i < operations.length) {
             if (
-                operationsCopy[i] === operationsKey.multiply.fn ||
-                operationsCopy[i] === operationsKey.divide.fn) {
-                // console.log('found:', operationsCopy[i], numbersCopy[i],numbersCopy[i + 1],
-                // operationsCopy[i](numbersCopy[i], numbersCopy[i + 1]))
-                numbersCopy[i] = operationsCopy[i](numbersCopy[i], numbersCopy[i + 1])
-                // console.log('during:', i, operationsCopy.slice(), numbersCopy.slice())
-                numbersCopy.splice(i + 1, 1)
-                operationsCopy.splice(i, 1)
-                // console.log('during:', i, operationsCopy.slice(), numbersCopy.slice())
-
+                operations[i] === operationsKey.multiply.fn ||
+                operations[i] === operationsKey.divide.fn) {
+                numbers[i] = operations[i](numbers[i], numbers[i + 1])
+                numbers.splice(i + 1, 1)
+                operations.splice(i, 1)
             } else {
                 i++
             }
         }
-        // console.log('after:', operationsCopy.slice(), numbersCopy.slice())
 
         // Reduce further the rest of the operations
-        const answer = numbersCopy.reduce((acc, x, i, all) =>
-            operationsCopy[i - 1](acc, x))
+        const answer = numbers.reduce((acc, x, i, all) =>
+            operations[i - 1](acc, x))
         this.updateDisplay(answer)
-
-        // console.log(answer)
 
         return answer
     },
@@ -133,7 +126,6 @@ const calculator = {
     },
 
     updateHistDisplay: function() {
-
         const history = this.numbers.reduce((acc, num, i) => {
             return acc.concat(num, this.getSymbol(this.operations[i]) || '')
         }, [])
@@ -141,7 +133,7 @@ const calculator = {
         this.histDisplayElem.innerText = history.join(' ')
     },
 
-    getSymbol: function (operationFn) {
+    getSymbol: function(operationFn) {
         return symbol = Object.keys(operationsKey).reduce((acc, val) => {
             if (operationsKey[val].fn === operationFn) {
                 return operationsKey[val].symbol
@@ -150,8 +142,21 @@ const calculator = {
         }, undefined)
     },
 
-    justFunc: function(arr) {
-            console.log(arr)
+    resetBtn: function(resetBtnElem, lastInput) {
+        if (lastInput === 'reset') {
+            this.reset()
+        } else {
+            this.resetDisplay()
+        }
+        this.lastInput = 'reset'
+    },
+
+    resetBtnState: function(resetBtnElem, lastInput) {
+        if (lastInput === 'digit') {
+            resetBtnElem.innerText = 'C'
+        } else if (lastInput === 'reset') {
+            resetBtnElem.innerText = 'AC'
+        }
     }
 }
 
@@ -159,24 +164,34 @@ const calculator = {
 const digitBtnHandler = e => {
     const digit = e.currentTarget.innerText
     calculator.addDigit(digit)
+    calculator.resetBtnState(calculator.resetBtnElem, calculator.lastInput)
 }
 
-const digitBtnArr = Array.from(document.getElementsByClassName('btn-digit'))
-digitBtnArr.forEach(btn => btn.addEventListener('click', digitBtnHandler))
+Array.from(document.getElementsByClassName('btn-digit'))
+.forEach(btn => btn.addEventListener('click', digitBtnHandler))
 
-const acButton = document.getElementById('ac-btn')
-acButton.addEventListener('click', e => { calculator.reset() })
+// Reset button
+const resetHandler = e => {
+    calculator.resetBtn(calculator.resetBtnElem, calculator.lastInput)
+    calculator.resetBtnState(calculator.resetBtnElem, calculator.lastInput)
+}
 
-const invertBtn = document.getElementById('invert-btn')
-invertBtn.addEventListener('click', e => { calculator.invertNumber() })
+document.getElementById('ac-btn')
+.addEventListener('click', resetHandler)
 
+// Invert button
+document.getElementById('invert-btn')
+.addEventListener('click', e => { calculator.invertNumber() })
+
+// Operation button
 const operationBtnHandler = e => {
     calculator.setOperation(e.currentTarget.dataset.operation)
 }
 
-const operatorBtnArr = Array.from(document.getElementsByClassName('btn-operator'))
-operatorBtnArr.forEach(btn => btn.addEventListener('click', operationBtnHandler))
+Array.from(document.getElementsByClassName('btn-operator'))
+.forEach(btn => btn.addEventListener('click', operationBtnHandler))
 
+// Equal button
 const eqBtnHandler = e => {
     if (calculator.lastInput === 'digit') {
         calculator.saveNumber()
@@ -190,8 +205,10 @@ const eqBtnHandler = e => {
 
 document.getElementById('btn-eq').addEventListener('click', eqBtnHandler)
 
+// Start here
 calculator.updateDisplay()
 
+// Test suit
 function testCalc() {
     // addDigit
     console.log("addDigit test")
