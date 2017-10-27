@@ -68,6 +68,11 @@ const calculator = {
         return number
     },
 
+    percentNumber: function(currentNumber, numbers) {
+        if (numbers.length === 0) return currentNumber / 100
+        return numbers[numbers.length - 1] * currentNumber / 100
+    },
+
     saveNumber: function(newNumber, numbers) {
         newNumber = typeof newNumber !== "undefined" ? newNumber : this.currentNumber
         numbers = typeof numbers !== "undefined" ? numbers : this.numbers
@@ -183,6 +188,14 @@ document.getElementById('ac-btn')
 document.getElementById('invert-btn')
 .addEventListener('click', e => { calculator.invertNumber() })
 
+// Percent button
+document.getElementById('percent-btn')
+.addEventListener('click', e => {
+    const newCurrent = calculator.percentNumber(calculator.currentNumber, calculator.numbers)
+    calculator.currentNumber = newCurrent
+    calculator.updateDisplay()
+})
+
 // Operation button
 const operationBtnHandler = e => {
     calculator.setOperation(e.currentTarget.dataset.operation)
@@ -225,14 +238,28 @@ function testCalc() {
 
     // invertNumber
     console.log("invertNumber test")
-    const testInvert1 = calculator.invertNumber(5) === -5 ?'success' : 'fail'
+    const testInvert1 = calculator.invertNumber(5) === -5 ? 'success' : 'fail'
     console.log(testInvert1)
-    const testInvert2 = calculator.invertNumber(8) === -8 ?'success' : 'fail'
+    const testInvert2 = calculator.invertNumber(8) === -8 ? 'success' : 'fail'
     console.log(testInvert2)
-    const testInvert3 = calculator.invertNumber(0) === 0 ?'success' : 'fail'
+    const testInvert3 = calculator.invertNumber(0) === 0 ? 'success' : 'fail'
     console.log(testInvert3)
-    const testInvert4 = calculator.invertNumber(-5) === 5 ?'success' : 'fail'
+    const testInvert4 = calculator.invertNumber(-5) === 5 ? 'success' : 'fail'
     console.log(testInvert4)
+
+    // percentNumber
+    console.log("percentNumber test")
+    const testPercent1 = calculator.percentNumber(5, []) === 0.05 ? 'success' : 'fail'
+    console.log(testPercent1)
+    const testPercent2 = calculator.percentNumber(5, [100]) === 5 ? 'success' : 'fail'
+    console.log(testPercent2)
+    const testPercent3 = calculator.percentNumber(5, [1000]) === 50 ? 'success' : 'fail'
+    console.log(testPercent3)
+    const testPercent4 = calculator.percentNumber(5, [100, 50]) === 2.5 ? 'success' : 'fail'
+    console.log(testPercent4)
+    const testPercent5 = calculator.percentNumber(5, [100, 50]) !== 3.5 ? 'success' : 'fail'
+    console.log(testPercent5)
+    
 
     function arrayEq(arr1, arr2) {
         return arr1.length === arr2.length &&
@@ -240,20 +267,20 @@ function testCalc() {
     }
     // arrayEq
     console.log("arrayEq test")
-    const testArrayEq1 = arrayEq([1, 2, 3], [1, 2, 3]) ?'success' : 'fail'
+    const testArrayEq1 = arrayEq([1, 2, 3], [1, 2, 3]) ? 'success' : 'fail'
     console.log(testArrayEq1)
-    const testArrayEq2 = !arrayEq([1, 2, 4], [1, 2, 3]) ?'success' : 'fail'
+    const testArrayEq2 = !arrayEq([1, 2, 4], [1, 2, 3]) ? 'success' : 'fail'
     console.log(testArrayEq2)
 
     // saveNumber
     console.log("saveNumber test")
-    const testSaveNumber1 = arrayEq(calculator.saveNumber(5, [1, 2, 3]), [1, 2, 3, 5]) ?'success' : 'fail'
+    const testSaveNumber1 = arrayEq(calculator.saveNumber(5, [1, 2, 3]), [1, 2, 3, 5]) ? 'success' : 'fail'
     console.log(testSaveNumber1)
-    const testSaveNumber2 = arrayEq(calculator.saveNumber(5, []), [5]) ?'success' : 'fail'
+    const testSaveNumber2 = arrayEq(calculator.saveNumber(5, []), [5]) ? 'success' : 'fail'
     console.log(testSaveNumber2)
-    const testSaveNumber3 = arrayEq(calculator.saveNumber(0, [1, 3]), [1, 3, 0]) ?'success' : 'fail'
+    const testSaveNumber3 = arrayEq(calculator.saveNumber(0, [1, 3]), [1, 3, 0]) ? 'success' : 'fail'
     console.log(testSaveNumber3)
-    const testSaveNumber4 = arrayEq(calculator.saveNumber(5, [5, 55, 555]), [5, 55, 555, 5]) ?'success' : 'fail'
+    const testSaveNumber4 = arrayEq(calculator.saveNumber(5, [5, 55, 555]), [5, 55, 555, 5]) ? 'success' : 'fail'
     console.log(testSaveNumber3)
 
     // setOperation
@@ -271,7 +298,7 @@ function testCalc() {
         operationsKey.divide.fn,
         operationsKey.subtract.fn,
         operationsKey.add.fn
-    ]) ?'success' : 'fail'
+    ]) ? 'success' : 'fail'
     console.log(testSetOperation1)
     const testSetOperation2 = arrayEq(calculator.setOperation(
         'subtract', opArray), [
@@ -280,7 +307,7 @@ function testCalc() {
         operationsKey.divide.fn,
         operationsKey.subtract.fn,
         operationsKey.subtract.fn
-    ]) ?'success' : 'fail'
+    ]) ? 'success' : 'fail'
     console.log(testSetOperation2)
     const testSetOperation3 = arrayEq(calculator.setOperation(
         'multiply', opArray), [
@@ -289,7 +316,7 @@ function testCalc() {
         operationsKey.divide.fn,
         operationsKey.subtract.fn,
         operationsKey.multiply.fn
-    ]) ?'success' : 'fail'
+    ]) ? 'success' : 'fail'
     console.log(testSetOperation3)
     const testSetOperation4 = arrayEq(calculator.setOperation(
         'divide', opArray), [
@@ -298,7 +325,7 @@ function testCalc() {
         operationsKey.divide.fn,
         operationsKey.subtract.fn,
         operationsKey.divide.fn
-    ]) ?'success' : 'fail'
+    ]) ? 'success' : 'fail'
     console.log(testSetOperation4)
 
     // calculate
