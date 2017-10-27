@@ -46,7 +46,6 @@ const calculator = {
         if (this.lastInput === "equal") this.reset()
         else if (this.lastInput === "operation") this.currentNumber = 0
         number = typeof number !== "undefined" ? number : this.currentNumber
-        // console.log(digit, number)
         if (String(number).length >= 8) return number
         if (number === 0) {
             number = digit
@@ -54,9 +53,8 @@ const calculator = {
             number = Number(String(number) + String(digit))
         }
         this.currentNumber = number
-        // console.log(digit, number)
-        this.updateDisplay()
         this.lastInput = "digit"
+        this.updateDisplay()
         return number
     },
 
@@ -91,8 +89,8 @@ const calculator = {
         }
         operations.push(operationsKey[strOperation].fn)
         this.operations = operations
-        this.calculate()
         this.lastInput = "operation"
+        this.calculate()
         return operations
     },
 
@@ -127,24 +125,30 @@ const calculator = {
     updateDisplay: function(num) {
         num = num || this.currentNumber
         this.displayElem.innerText = String(num)
-        this.updateHistDisplay()
+        this.updateHistDisplay(this.histDisplayElem, this.numbers, this.operations)
     },
 
-    updateHistDisplay: function() {
-        const history = this.numbers.reduce((acc, num, i) => {
-            return acc.concat(num, this.getSymbol(this.operations[i]) || '')
+    updateHistDisplay: function(histDisplayElem, numbers, operations) {
+        const history = numbers.reduce((acc, num, i) => {
+            return acc.concat(num, this.getSymbol(operations[i]) || '')
         }, [])
 
-        this.histDisplayElem.innerText = history.join(' ')
+        // console.log('current number:', this.currentNumber, history[history.length - 1])
+        console.log('last action:', this.lastInput)
+        if (this.lastInput === 'digit') {
+            history.push(this.currentNumber)
+        }
+
+        histDisplayElem.innerText = history.join(' ')
     },
 
+    // returns the symbol of the operation for display
     getSymbol: function(operationFn) {
-        return symbol = Object.keys(operationsKey).reduce((acc, val) => {
-            if (operationsKey[val].fn === operationFn) {
-                return operationsKey[val].symbol
-            }
-            return acc
-        }, undefined)
+        if (!operationFn) return
+
+        const value = Object.keys(operationsKey).find(x =>
+            operationsKey[x].fn === operationFn)
+        return operationsKey[value].symbol
     },
 
     resetBtn: function(resetBtnElem, lastInput) {
@@ -163,6 +167,7 @@ const calculator = {
             resetBtnElem.innerText = 'AC'
         }
     }
+
 }
 
 // Digit buttons: add digit to current number
@@ -210,10 +215,10 @@ const eqBtnHandler = e => {
         calculator.saveNumber()
     }
     console.log(calculator.operations, calculator.numbers)
+    calculator.lastInput = 'equal'
     if (calculator.numbers.length > 1 && calculator.operations.length > 0) {
         calculator.calculate()
     }
-    calculator.lastInput = 'equal'
 }
 
 document.getElementById('btn-eq').addEventListener('click', eqBtnHandler)
