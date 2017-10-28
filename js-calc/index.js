@@ -41,7 +41,7 @@ const calculator = {
     },
 
     resetDisplay: function() {
-        this.currentNumber = 0
+        this.currentNumber = ''
         this.updateDisplay()
     },
 
@@ -49,8 +49,12 @@ const calculator = {
         if (this.lastInput === "equal") this.reset()
         else if (this.lastInput === "operation") this.currentNumber = 0
         number = typeof number !== "undefined" ? number : this.currentNumber
+
         if (String(number).length >= 30) return number
-        if (number === 0) {
+        if (digit === '.' && String(number).includes('.')) return number
+        if (digit === '.' && number === 0) {
+            number = '0.'
+        } else if (number === 0) {
             number = digit
         } else {
             number = String(number) + String(digit)
@@ -62,7 +66,12 @@ const calculator = {
     },
 
     invertNumber: function(number) {
-        number = typeof number !== "undefined" ? number : this.currentNumber
+        if (this.lastInput === 'equal') {
+            number = typeof number !== "undefined" ? number : this.calculate()
+        } else if (this.lastInput === 'digit') {
+            number = typeof number !== "undefined" ? number : this.currentNumber
+        } else return
+
         number *= -1
         this.currentNumber = number
         this.updateDisplay()
@@ -164,8 +173,11 @@ const calculator = {
     resetBtn: function(resetBtnElem, lastInput) {
         if (lastInput === 'reset') {
             this.reset()
-        } else {
+        } else if (lastInput === 'digit') {
             this.resetDisplay()
+        } else if (lastInput === 'operation') {
+            this.operations.pop()
+            this.updateDisplay()
         }
         this.lastInput = 'reset'
     },
@@ -224,7 +236,6 @@ const eqBtnHandler = e => {
     if (calculator.lastInput === 'digit') {
         calculator.saveNumber()
     }
-    console.log(calculator.operations, calculator.numbers)
     calculator.lastInput = 'equal'
     if (calculator.numbers.length > 1 && calculator.operations.length > 0) {
         calculator.calculate()
