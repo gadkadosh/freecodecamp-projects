@@ -1,5 +1,8 @@
 'use static'
 
+let DISP_WIDTH
+let DISP_FONT
+
 const operationsKey = {
     add: {
         symbol: '+',
@@ -46,11 +49,11 @@ const calculator = {
         if (this.lastInput === "equal") this.reset()
         else if (this.lastInput === "operation") this.currentNumber = 0
         number = typeof number !== "undefined" ? number : this.currentNumber
-        if (String(number).length >= 8) return number
+        if (String(number).length >= 30) return number
         if (number === 0) {
             number = digit
         } else {
-            number = Number(String(number) + String(digit))
+            number = String(number) + String(digit)
         }
         this.currentNumber = number
         this.lastInput = "digit"
@@ -122,10 +125,18 @@ const calculator = {
         return answer
     },
 
-    updateDisplay: function(num) {
-        num = num || this.currentNumber
-        this.displayElem.innerText = String(num)
+    updateDisplay: function(num = this.currentNumber, displayElem = this.displayElem) {
+        displayElem.innerText = String(num)
+        displayElem.style.fontSize = DISP_FONT + "px"
         this.updateHistDisplay(this.histDisplayElem, this.numbers, this.operations)
+
+        // console.log('display width:', this.displayElem.offsetWidth)
+
+        while (displayElem.offsetWidth > DISP_WIDTH) {
+            const fontSize = window.getComputedStyle(displayElem).fontSize.slice(0, -2) - 2
+            // console.log('too large!', fontSize)
+            displayElem.style.fontSize = fontSize + "px"
+        }
     },
 
     updateHistDisplay: function(histDisplayElem, numbers, operations) {
@@ -133,8 +144,7 @@ const calculator = {
             return acc.concat(num, this.getSymbol(operations[i]) || '')
         }, [])
 
-        // console.log('current number:', this.currentNumber, history[history.length - 1])
-        console.log('last action:', this.lastInput)
+        // console.log('last action:', this.lastInput)
         if (this.lastInput === 'digit') {
             history.push(this.currentNumber)
         }
@@ -223,22 +233,62 @@ const eqBtnHandler = e => {
 
 document.getElementById('btn-eq').addEventListener('click', eqBtnHandler)
 
+// Keyboard input
+const keyboardHandler = e => {
+    console.log(e.key, typeof e.key)
+
+    if (/^[\d.]$/.test(e.key)) {
+        calculator.addDigit(e.key)
+        console.log("it's a number")
+    } else if (/^[\+\-/\*_%]$/.test(e.key)) {
+        console.log("it's an operation")
+        switch (e.key) {
+            case "+":
+                calculator.setOperation('add')
+                break
+            case "-":
+                calculator.setOperation('subtract')
+                break
+            case "/":
+                calculator.setOperation('divide')
+                break
+            case "*":
+                calculator.setOperation('multiply')
+                break
+            case "_":
+                calculator.invertNumber()
+                break
+            case "%":
+                calculator.percentNumber(calculator.currentNumber, calculator.numbers)
+                break
+        }
+    } else if (e.key === "Enter") {
+        eqBtnHandler()
+    } else if (e.key === "Escape" || e.key === "Backspace") {
+        resetHandler()
+    }
+}
+
+document.addEventListener('keydown', keyboardHandler)
+
 // Start here
-calculator.updateDisplay()
+calculator.reset()
+DISP_WIDTH = calculator.displayElem.offsetWidth
+DISP_FONT = window.getComputedStyle(calculator.displayElem).fontSize.slice(0, -2)
 
 // Test suit
 function testCalc() {
     // addDigit
     console.log("addDigit test")
-    const testAddDigit1 = calculator.addDigit(4, 18) === 184 ? 'success' : 'fail'
+    const testAddDigit1 = calculator.addDigit(4, 18) == 184 ? 'success' : 'fail'
     console.log(testAddDigit1)
-    const testAddDigit2 = calculator.addDigit(0, 18) === 180 ? 'success' : 'fail'
+    const testAddDigit2 = calculator.addDigit(0, 18) == 180 ? 'success' : 'fail'
     console.log(testAddDigit2)
-    const testAddDigit3 = calculator.addDigit(4, 0) === 4 ? 'success' : 'fail'
+    const testAddDigit3 = calculator.addDigit(4, 0) == 4 ? 'success' : 'fail'
     console.log(testAddDigit3)
-    const testAddDigit4 = calculator.addDigit(0, 0) === 0 ? 'success' : 'fail'
+    const testAddDigit4 = calculator.addDigit(0, 0) == 0 ? 'success' : 'fail'
     console.log(testAddDigit4)
-    const testAddDigit5 = calculator.addDigit(4, 12312138) === 12312138 ? 'success' : 'fail'
+    const testAddDigit5 = calculator.addDigit(4, 12312138) == 12312138 ? 'success' : 'fail'
     console.log(testAddDigit5)
 
     // invertNumber
