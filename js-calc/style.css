@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     box-sizing: border-box;
     text-align: center;
@@ -27,13 +31,14 @@ body {
 
 .history-display {
     display: flex;
-    justify-content: flex-begin;
     align-items: center;
     height: 28px;
     background-color: #979797;
     color: #f5f5f5;
     font-size: 16px;
     padding: 0 10px;
+    white-space: nowrap;
+    overflow: scroll;
 }
 
 .px-2 {

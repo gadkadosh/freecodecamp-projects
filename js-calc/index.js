@@ -28,6 +28,7 @@ const calculator = {
     histDisplayElem: document.getElementById('history-display'),
     resetBtnElem: document.getElementById('ac-btn'),
     currentNumber: 0,
+    result: 0,
     lastInput: '',
     numbers: [],
     operations: [],
@@ -66,8 +67,9 @@ const calculator = {
     },
 
     invertNumber: function(number) {
+        console.log(this.lastInput)
         if (this.lastInput === 'equal') {
-            number = typeof number !== "undefined" ? number : this.calculate()
+            number = typeof number !== "undefined" ? number : this.result
         } else if (this.lastInput === 'digit') {
             number = typeof number !== "undefined" ? number : this.currentNumber
         } else return
@@ -130,6 +132,7 @@ const calculator = {
         const answer = numbers.reduce((acc, x, i, all) =>
             operations[i - 1](acc, x))
         this.updateDisplay(answer)
+        this.result = answer
 
         return answer
     },
@@ -284,7 +287,12 @@ document.addEventListener('keydown', keyboardHandler)
 
 // Start here
 calculator.reset()
+
+// Check the width of the calculator and set it to the history display
 DISP_WIDTH = calculator.displayElem.offsetWidth
+calculator.histDisplayElem.style.width = DISP_WIDTH
+
+// Save the original font size of the display
 DISP_FONT = window.getComputedStyle(calculator.displayElem).fontSize.slice(0, -2)
 
 // Test suit
