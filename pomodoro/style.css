@@ -1,0 +1,15 @@
+.full-screen {
+    height: 100vh;
+}
+
+.counter {
+    font-size: 4rem;
+}
+
+.btn-go {
+    font-size: 4rem;
+}
+
+.text-center {
+    text-align: center;
+}
