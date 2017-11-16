@@ -2,12 +2,12 @@
 
 // const workLength = 82 * 60 * 1000
 // const breakLength = 5 * 60 * 1000
-// state can be 'stop', 'work', 'break'
+// state can be 'stop', 'work', 'pause'
 // TODO: make it an array of the history
 let state = 'stop'
 let counter
-let workLength = 25 * 60 * 1000
-let pauseLength = 5 * 60 * 1000
+let workLength = 2
+let pauseLength = 1
 
 // Dom elements
 const goBtnElem = document.getElementById('btn-go-stop')
@@ -17,8 +17,25 @@ const pauseLengthElem = document.getElementById('pause-length')
 
 function updateCounter(nextBuzz, counterElem) {
     const timeLeft = Math.round((nextBuzz - Date.now()) / 1000)
-    // console.log('timer at:', timeLeft)
-    counterElem.innerText = formatTime(timeLeft)
+    if (timeLeft >= 0) {
+        // console.log('timer at:', timeLeft)
+        counterElem.innerText = formatTime(timeLeft)
+    } else {
+        window.clearInterval(counter)
+        if (state === 'work'){
+            state = 'pause'
+            const newNextBuzz = Date.now() + (pauseLength * 60 * 1000)
+            counter = window.setInterval(function(){
+                updateCounter(newNextBuzz, counterElem)
+            }, 1000)
+        } else if (state === 'pause') {
+            state = 'work'
+            const newNextBuzz = Date.now() + (workLength * 60 * 1000)
+            counter = window.setInterval(function(){
+                updateCounter(newNextBuzz, counterElem)
+            }, 1000)
+        }
+    }
 }
 
 function formatTime(time) {
@@ -45,7 +62,7 @@ function updateBtn(state, goBtnElem) {
 document.getElementById('btn-go-stop').addEventListener('click', function(event) {
     if (state === 'stop') {
         console.log(workLength)
-        const nextBuzz = Date.now() + workLength
+        const nextBuzz = Date.now() + (workLength * 60 * 1000)
         updateCounter(nextBuzz, counterElem)
         counter = window.setInterval(function(){
             updateCounter(nextBuzz, counterElem)
@@ -61,9 +78,9 @@ document.getElementById('btn-go-stop').addEventListener('click', function(event)
 
 document.getElementById('btn-wl-min').addEventListener('click', function(event) {
     let currentLength = Number(workLengthElem.innerText)
-    if (currentLength > 0) {
+    if (currentLength > 1) {
         currentLength -= 1
-        workLength = currentLength * 60 * 1000
+        workLength = currentLength
         workLengthElem.innerText = currentLength
     }
 })
@@ -71,15 +88,15 @@ document.getElementById('btn-wl-min').addEventListener('click', function(event) 
 document.getElementById('btn-wl-plus').addEventListener('click', function(event) {
     let currentLength = Number(workLengthElem.innerText)
     currentLength += 1
-    workLength = currentLength * 60 * 1000
+    workLength = currentLength
     workLengthElem.innerText = currentLength
 })
 
 document.getElementById('btn-pl-min').addEventListener('click', function(event) {
     let currentLength = Number(pauseLengthElem.innerText)
-    if (currentLength > 0) {
+    if (currentLength > 1) {
         currentLength -= 1
-        pauseLength = currentLength * 60 * 1000
+        pauseLength = currentLength
         pauseLengthElem.innerText = currentLength
     }
 })
@@ -87,14 +104,14 @@ document.getElementById('btn-pl-min').addEventListener('click', function(event) 
 document.getElementById('btn-pl-plus').addEventListener('click', function(event) {
     let currentLength = Number(pauseLengthElem.innerText)
     currentLength += 1
-    pauseLength = currentLength * 60 * 1000
+    pauseLength = currentLength
     pauseLengthElem.innerText = currentLength
 })
 
 // Start
-workLengthElem.innerText = workLength / (60 * 1000)
-pauseLengthElem.innerText = pauseLength / (60 * 1000)
-counterElem.innerText = formatTime(workLength / 1000)
+workLengthElem.innerText = workLength
+pauseLengthElem.innerText = pauseLength
+counterElem.innerText = formatTime(workLength * 60)
 
 // Testing
 if (padTime(0) !== '00') {
