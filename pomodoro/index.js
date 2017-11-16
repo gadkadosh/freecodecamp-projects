@@ -1,15 +1,13 @@
 'use strict'
 
-// const workLength = 82 * 60 * 1000
-// const breakLength = 5 * 60 * 1000
-// state can be 'stop', 'work', 'pause'
-// TODO: make it an array of the history
-let state = 'stop'
+// state can be 'stop', 'work', 'pause', 'extended'
+const state = []
 let counter
 let workLength = 2
 let pauseLength = 1
 
 // Dom elements
+const sessionTitleElem = document.getElementById('session-title')
 const goBtnElem = document.getElementById('btn-go-stop')
 const counterElem = document.getElementById('counter')
 const workLengthElem = document.getElementById('work-length')
@@ -22,20 +20,39 @@ function updateCounter(nextBuzz, counterElem) {
         counterElem.innerText = formatTime(timeLeft)
     } else {
         window.clearInterval(counter)
-        if (state === 'work'){
-            state = 'pause'
-            const newNextBuzz = Date.now() + (pauseLength * 60 * 1000)
-            counter = window.setInterval(function(){
-                updateCounter(newNextBuzz, counterElem)
-            }, 1000)
-        } else if (state === 'pause') {
-            state = 'work'
-            const newNextBuzz = Date.now() + (workLength * 60 * 1000)
-            counter = window.setInterval(function(){
-                updateCounter(newNextBuzz, counterElem)
-            }, 1000)
+        const curState = state[state.length - 1]
+        let newNextBuzz
+        let soundPromise
+        if (shouldExtended(state)) {
+            state.push('extended')
+            newNextBuzz = Date.now() + (workLength * 60 * 1000)
+            soundPromise = chimeSound.play()
+        } else if (curState === 'work'){
+            state.push('pause')
+            newNextBuzz = Date.now() + (pauseLength * 60 * 1000)
+            soundPromise = chimeSound.play()
+        } else if (curState === 'pause' || curState === 'extended') {
+            state.push('work')
+            newNextBuzz = Date.now() + (workLength * 60 * 1000)
+            soundPromise = gongSound.play()
         }
+        if (soundPromise !== undefined) {
+            soundPromise.catch(error => {
+                // Safari 11 for example blocks autoplaying video/audio
+                console.log('Sound probably blocked on this platform')
+            })
+        }
+        setSessionTitle(state, sessionTitleElem)
+        counter = window.setInterval(function(){
+            updateCounter(newNextBuzz, counterElem)
+        }, 1000)
     }
+}
+
+function shouldExtended(state) {
+    return state.filter(val => val !== 'pause')
+    .slice(-4)
+    .every(val => val === 'work')
 }
 
 function formatTime(time) {
@@ -52,28 +69,39 @@ function padTime(time) {
 
 function updateBtn(state, goBtnElem) {
     console.log('update button!', goBtnElem)
-    if (state === 'stop') {
+    if (state[state.length - 1] === 'stop') {
         goBtnElem.innerText = 'Go'
     } else {
         goBtnElem.innerText = 'Stop'
     }
 }
 
+function setSessionTitle(state, titleElem) {
+    const curState = state[state.length - 1]
+    if (curState === 'stop') {
+        titleElem.innerText = ''
+    } else {
+        const title = curState.slice(0, 1).toUpperCase() + curState.slice(1) + '!'
+        titleElem.innerText = title
+    }
+}
+
 document.getElementById('btn-go-stop').addEventListener('click', function(event) {
-    if (state === 'stop') {
+    if (state[state.length - 1]  === 'stop') {
         console.log(workLength)
         const nextBuzz = Date.now() + (workLength * 60 * 1000)
         updateCounter(nextBuzz, counterElem)
         counter = window.setInterval(function(){
             updateCounter(nextBuzz, counterElem)
         }, 1000)
-        state = 'work'
+        state.push('work')
         // console.log('start time:', startTime, 'rings at:', nextBuzz)
-    } else if (state === 'work') {
+    } else if (state[state.length - 1] === 'work') {
         window.clearInterval(counter)
-        state = 'stop'
+        state.push('stop')
     }
     updateBtn(state, goBtnElem)
+    setSessionTitle(state, sessionTitleElem)
 })
 
 document.getElementById('btn-wl-min').addEventListener('click', function(event) {
@@ -111,7 +139,11 @@ document.getElementById('btn-pl-plus').addEventListener('click', function(event)
 // Start
 workLengthElem.innerText = workLength
 pauseLengthElem.innerText = pauseLength
+state.push('stop')
+setSessionTitle(state, sessionTitleElem)
 counterElem.innerText = formatTime(workLength * 60)
+const chimeSound = new Audio('./zymbel.mp3')
+const gongSound = new Audio('./chinese-gong.mp3')
 
 // Testing
 if (padTime(0) !== '00') {
