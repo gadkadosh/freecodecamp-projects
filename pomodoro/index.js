@@ -6,8 +6,8 @@
 // TODO: make it an array of the history
 let state = 'stop'
 let counter
-let workLength
-let pauseLength
+let workLength = 25 * 60 * 1000
+let pauseLength = 5 * 60 * 1000
 
 // Dom elements
 const goBtnElem = document.getElementById('btn-go-stop')
@@ -44,8 +44,9 @@ function updateBtn(state, goBtnElem) {
 
 document.getElementById('btn-go-stop').addEventListener('click', function(event) {
     if (state === 'stop') {
+        console.log(workLength)
         const nextBuzz = Date.now() + workLength
-        // updateCounter(nextBuzz, counterElem)
+        updateCounter(nextBuzz, counterElem)
         counter = window.setInterval(function(){
             updateCounter(nextBuzz, counterElem)
         }, 1000)
@@ -58,9 +59,41 @@ document.getElementById('btn-go-stop').addEventListener('click', function(event)
     updateBtn(state, goBtnElem)
 })
 
+document.getElementById('btn-wl-min').addEventListener('click', function(event) {
+    let currentLength = Number(workLengthElem.innerText)
+    if (currentLength > 0) {
+        currentLength -= 1
+        workLength = currentLength * 60 * 1000
+        workLengthElem.innerText = currentLength
+    }
+})
+
+document.getElementById('btn-wl-plus').addEventListener('click', function(event) {
+    let currentLength = Number(workLengthElem.innerText)
+    currentLength += 1
+    workLength = currentLength * 60 * 1000
+    workLengthElem.innerText = currentLength
+})
+
+document.getElementById('btn-pl-min').addEventListener('click', function(event) {
+    let currentLength = Number(pauseLengthElem.innerText)
+    if (currentLength > 0) {
+        currentLength -= 1
+        pauseLength = currentLength * 60 * 1000
+        pauseLengthElem.innerText = currentLength
+    }
+})
+
+document.getElementById('btn-pl-plus').addEventListener('click', function(event) {
+    let currentLength = Number(pauseLengthElem.innerText)
+    currentLength += 1
+    pauseLength = currentLength * 60 * 1000
+    pauseLengthElem.innerText = currentLength
+})
+
 // Start
-workLength = workLengthElem.innerText * 60 * 1000
-pauseLength = pauseLengthElem.innerText * 60 * 1000
+workLengthElem.innerText = workLength / (60 * 1000)
+pauseLengthElem.innerText = pauseLength / (60 * 1000)
 counterElem.innerText = formatTime(workLength / 1000)
 
 // Testing
