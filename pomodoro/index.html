@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css" media="all">
 </head>
 <body>
-    <div class="container full-screen">
+    <div id="timer-page" class="container full-screen">
         <div id="session-title" class="session-title text-center"></div>
         <div class="timer-analog text-center">
             <div class="text-center">
@@ -30,6 +30,13 @@
                 <span id="pause-length" class="pause-length"></span>
                 <span>Min</span>
                 <button id="btn-pl-plus">+</button>
+            </div>
+            <div>
+                <p>Extended break every</p>
+                <button id="btn-ee-min">-</button>
+                <span id="extended-every"></span>
+                <span>sessions</span>
+                <button id="btn-ee-plus">+</button>
             </div>
         </div>
     </div>
