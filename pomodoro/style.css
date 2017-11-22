@@ -8,6 +8,7 @@ body {
 
 .full-screen {
     height: 100vh;
+    transition: background-color 1.6s ease;
 }
 
 .counter {

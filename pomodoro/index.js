@@ -102,9 +102,9 @@ function setBg(newState, timerPageElem) {
     // const stateBgs = ['bg-stop', 'bg-work', 'bg-pause', 'bg-extended']
     console.log(stateBgs, newState)
     if (stateBgs[newState]) {
-        const oldStates = Object.keys(stateBgs).filter(x => x !== newState)
-            .forEach(x => timerPageElem.classList.remove(stateBgs[x]))
         timerPageElem.classList.add(stateBgs[newState])
+        Object.keys(stateBgs).filter(x => x !== newState)
+            .forEach(x => timerPageElem.classList.remove(stateBgs[x]))
     }
 }
 
