@@ -11,6 +11,12 @@ body {
     transition: background-color 1.6s ease;
 }
 
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .counter {
     font-size: 4rem;
 }

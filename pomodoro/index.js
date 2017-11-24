@@ -8,7 +8,7 @@ let pauseLength = 1
 let extendedEvery = 4
 
 // Dom elements
-const timerPageElem = document.getElementById('timer-page')
+const bodyElem = document.getElementsByTagName('body')[0]
 const sessionTitleElem = document.getElementById('session-title')
 const goBtnElem = document.getElementById('btn-go-stop')
 const counterElem = document.getElementById('counter')
@@ -28,17 +28,17 @@ function updateCounter(nextBuzz, counterElem) {
         let soundPromise
         if (shouldExtended(state)) {
             state.push('extended')
-            setBg(state[state.length - 1], timerPageElem)
+            setBg(state[state.length - 1], bodyElem)
             newNextBuzz = Date.now() + (workLength * 60 * 1000)
             soundPromise = chimeSound.play()
         } else if (curState === 'work'){
             state.push('pause')
-            setBg(state[state.length - 1], timerPageElem)
+            setBg(state[state.length - 1], bodyElem)
             newNextBuzz = Date.now() + (pauseLength * 60 * 1000)
             soundPromise = chimeSound.play()
         } else if (curState === 'pause' || curState === 'extended') {
             state.push('work')
-            setBg(state[state.length - 1], timerPageElem)
+            setBg(state[state.length - 1], bodyElem)
             newNextBuzz = Date.now() + (workLength * 60 * 1000)
             soundPromise = gongSound.play()
         }
@@ -92,19 +92,17 @@ function setSessionTitle(state, titleElem) {
     }
 }
 
-function setBg(newState, timerPageElem) {
+function setBg(newState, bodyElem) {
     const stateBgs = {
         'stop': 'bg-stop',
         'work': 'bg-work',
         'pause': 'bg-pause',
         'extended': 'bg-extended',
     }
-    // const stateBgs = ['bg-stop', 'bg-work', 'bg-pause', 'bg-extended']
-    console.log(stateBgs, newState)
     if (stateBgs[newState]) {
-        timerPageElem.classList.add(stateBgs[newState])
+        bodyElem.classList.add(stateBgs[newState])
         Object.keys(stateBgs).filter(x => x !== newState)
-            .forEach(x => timerPageElem.classList.remove(stateBgs[x]))
+            .forEach(x => bodyElem.classList.remove(stateBgs[x]))
     }
 }
 
@@ -115,7 +113,7 @@ function startWork() {
         updateCounter(nextBuzz, counterElem)
     }, 1000)
     state.push('work')
-    setBg(state[state.length - 1], timerPageElem)
+    setBg(state[state.length - 1], bodyElem)
 }
 
 document.getElementById('btn-go-stop').addEventListener('click', function(event) {
@@ -124,7 +122,7 @@ document.getElementById('btn-go-stop').addEventListener('click', function(event)
     } else {
         window.clearInterval(counter)
         state.push('stop')
-        setBg(state[state.length - 1], timerPageElem)
+        setBg(state[state.length - 1], bodyElem)
     }
     updateBtn(state, goBtnElem)
     setSessionTitle(state, sessionTitleElem)
@@ -174,7 +172,7 @@ workLengthElem.innerText = workLength
 pauseLengthElem.innerText = pauseLength
 extendedEveryElem.innerText = extendedEvery
 state.push('stop')
-setBg(state[state.length - 1], timerPageElem)
+setBg(state[state.length - 1], bodyElem)
 setSessionTitle(state, sessionTitleElem)
 counterElem.innerText = formatTime(workLength * 60)
 const chimeSound = new Audio('./zymbel.mp3')
