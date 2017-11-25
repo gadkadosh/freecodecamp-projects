@@ -9,18 +9,20 @@ let extendedEvery = 4
 
 // Dom elements
 const bodyElem = document.getElementsByTagName('body')[0]
-const sessionTitleElem = document.getElementById('session-title')
 const goBtnElem = document.getElementById('btn-go-stop')
+const stopLblElem = document.getElementById('stop-label')
+const analogTimerElem = document.getElementById('timer-analog')
 const counterElem = document.getElementById('counter')
 const workLengthElem = document.getElementById('work-length')
 const pauseLengthElem = document.getElementById('pause-length')
 const extendedEveryElem = document.getElementById('extended-every')
 
-function updateCounter(nextBuzz, counterElem) {
+function updateCounter(nextBuzz, sessionLength, counterElem) {
     const timeLeft = Math.round((nextBuzz - Date.now()) / 1000)
-    if (timeLeft >= 0) {
+    if (timeLeft > 0) {
         // console.log('timer at:', timeLeft)
         counterElem.innerText = formatTime(timeLeft)
+        updateAnalogTimer(timeLeft * 1000 / sessionLength, analogTimerElem, goBtnElem)
     } else {
         window.clearInterval(counter)
         const curState = state[state.length - 1]
@@ -29,17 +31,17 @@ function updateCounter(nextBuzz, counterElem) {
         if (shouldExtended(state)) {
             state.push('extended')
             setBg(state[state.length - 1], bodyElem)
-            newNextBuzz = Date.now() + (workLength * 60 * 1000)
+            sessionLength = workLength * 60 * 1000
             soundPromise = chimeSound.play()
         } else if (curState === 'work'){
             state.push('pause')
             setBg(state[state.length - 1], bodyElem)
-            newNextBuzz = Date.now() + (pauseLength * 60 * 1000)
+            sessionLength = pauseLength * 60 * 1000
             soundPromise = chimeSound.play()
         } else if (curState === 'pause' || curState === 'extended') {
             state.push('work')
             setBg(state[state.length - 1], bodyElem)
-            newNextBuzz = Date.now() + (workLength * 60 * 1000)
+            sessionLength = workLength * 60 * 1000
             soundPromise = gongSound.play()
         }
         if (soundPromise !== undefined) {
@@ -48,17 +50,27 @@ function updateCounter(nextBuzz, counterElem) {
                 console.log('Sound probably blocked on this platform')
             })
         }
-        setSessionTitle(state, sessionTitleElem)
+        newNextBuzz = Date.now() + sessionLength
+        updateBtn(state, goBtnElem)
+        updateCounter(newNextBuzz, sessionLength, counterElem)
         counter = window.setInterval(function(){
-            updateCounter(newNextBuzz, counterElem)
+            updateCounter(newNextBuzz, sessionLength, counterElem)
         }, 1000)
     }
 }
 
+function updateAnalogTimer(percentThrough, analogTimerElem, goBtnElem) {
+    // console.log(percentThrough)
+    const newScale = (percentThrough * maxScale) + (1 - maxScale)
+    // console.log(newScale)
+    const transformDiv = "scale(" + newScale + ")"
+    analogTimerElem.style.transform = transformDiv
+}
+
 function shouldExtended(state) {
     return state.filter(val => val !== 'pause')
-    .slice(extendedEvery * -1)
-    .every(val => val === 'work')
+        .slice(extendedEvery * -1)
+        .every(val => val === 'work')
 }
 
 function formatTime(time) {
@@ -74,21 +86,12 @@ function padTime(time) {
 }
 
 function updateBtn(state, goBtnElem) {
-    console.log('update button!', goBtnElem)
-    if (state[state.length - 1] === 'stop') {
-        goBtnElem.innerText = 'Go'
-    } else {
-        goBtnElem.innerText = 'Stop'
-    }
-}
-
-function setSessionTitle(state, titleElem) {
     const curState = state[state.length - 1]
     if (curState === 'stop') {
-        titleElem.innerText = ''
+        goBtnElem.innerText = 'Go!'
     } else {
-        const title = curState.slice(0, 1).toUpperCase() + curState.slice(1) + '!'
-        titleElem.innerText = title
+        const title = curState.slice(0, 1).toUpperCase() + curState.slice(1)
+        goBtnElem.innerText = title
     }
 }
 
@@ -107,14 +110,25 @@ function setBg(newState, bodyElem) {
 }
 
 function startWork() {
-    const nextBuzz = Date.now() + (workLength * 60 * 1000)
-    updateCounter(nextBuzz, counterElem)
+    const sessionLength = workLength * 60 * 1000
+    const nextBuzz = Date.now() + sessionLength
+    updateCounter(nextBuzz, sessionLength, counterElem)
     counter = window.setInterval(function(){
-        updateCounter(nextBuzz, counterElem)
+        updateCounter(nextBuzz, sessionLength, counterElem)
     }, 1000)
     state.push('work')
     setBg(state[state.length - 1], bodyElem)
 }
+
+document.getElementById('btn-go-stop').addEventListener('mouseover', function(event) {
+    if (state[state.length - 1] !== 'stop') {
+        stopLblElem.classList.remove('hidden')
+    }
+})
+
+document.getElementById('btn-go-stop').addEventListener('mouseleave', function(event) {
+    stopLblElem.classList.add('hidden')
+})
 
 document.getElementById('btn-go-stop').addEventListener('click', function(event) {
     if (state[state.length - 1]  === 'stop') {
@@ -125,7 +139,6 @@ document.getElementById('btn-go-stop').addEventListener('click', function(event)
         setBg(state[state.length - 1], bodyElem)
     }
     updateBtn(state, goBtnElem)
-    setSessionTitle(state, sessionTitleElem)
 })
 
 document.getElementById('btn-wl-min').addEventListener('click', function(event) {
@@ -173,10 +186,12 @@ pauseLengthElem.innerText = pauseLength
 extendedEveryElem.innerText = extendedEvery
 state.push('stop')
 setBg(state[state.length - 1], bodyElem)
-setSessionTitle(state, sessionTitleElem)
+updateBtn(state, goBtnElem)
 counterElem.innerText = formatTime(workLength * 60)
 const chimeSound = new Audio('./zymbel.mp3')
 const gongSound = new Audio('./chinese-gong.mp3')
+const maxScale = (100 - window.getComputedStyle(goBtnElem).transform
+    .match(/matrix\((\d+\.\d+),.*\)/)[1] * 100) / 100
 
 // Testing
 if (padTime(0) !== '00') {

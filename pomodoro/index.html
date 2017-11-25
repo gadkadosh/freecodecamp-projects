@@ -7,11 +7,10 @@
 </head>
 <body class="full-screen flex-center">
     <div>
-        <div id="session-title" class="session-title text-center"></div>
-        <div class="timer-analog text-center">
-            <div class="text-center">
-                <button id="btn-go-stop" class="btn-go-stop">Go</button>
-            </div>
+        <div id="stop-label" class="stop-label text-center hidden">Stop?</div>
+        <div class="timer-analog-container text-center">
+            <div id="timer-analog" class="timer-analog text-center"></div>
+            <button id="btn-go-stop" class="btn-go-stop"></button>
         </div>
         <div class="timer-digital text-center">
             <span id="counter" class="counter"></span>

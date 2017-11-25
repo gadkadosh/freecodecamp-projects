@@ -17,12 +17,58 @@ body {
     align-items: center;
 }
 
+.hidden {
+    opacity: 0;
+}
+
+.stop-label {
+    font-size: 2rem;
+    color: #555;
+    margin-bottom: 0.2rem;
+    transition: opacity 0.8s 0.2s;
+}
+
 .counter {
     font-size: 4rem;
 }
 
+.timer-analog-container {
+    position: relative;
+    height: 240px;
+    width: 240px;
+    margin-bottom: 1rem;
+}
+
+.timer-analog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #582571;
+    border-radius: 50%;
+    border: 0;
+    transition: transform 0.8s;
+}
+
 .btn-go-stop {
-    font-size: 4rem;
+    font-size: 3.6rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transform: scale(0.65);
+    background: radial-gradient(#C878FB, #9840C3);
+    color: #f2f2f2;
+    border-radius: 50%;
+    border: 0;
+    transition: all 0.2s;
+}
+
+.btn-go-stop:hover {
+    transform: scale(0.82);
+    color: #fff;
 }
 
 .session-title {
