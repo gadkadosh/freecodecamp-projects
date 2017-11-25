@@ -4,11 +4,11 @@
 
 body {
     margin: 0;
+    color: #333;
 }
 
 .full-screen {
     height: 100vh;
-    transition: background-color 1.6s ease;
 }
 
 .flex-center {
@@ -34,17 +34,17 @@ body {
 }
 
 .bg-stop {
-    background-color: rgb(157, 58, 225);
+    background: radial-gradient(#ddd, rgb(157, 58, 225));
 }
 
 .bg-work {
-    background-color: rgb(255, 0, 0);
+    background: radial-gradient(#ddd, rgb(250, 80, 80));
 }
 
 .bg-pause {
-    background-color: rgb(0, 255, 68);
+    background: radial-gradient(#ddd, rgb(0, 255, 68));
 }
 
 .bg-extended {
-    background-color: blue;
+    background: radial-gradient(#ddd, #276BF5);
 }
