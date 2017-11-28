@@ -18,24 +18,20 @@
         <div class="settings text-center">
             <div id="work-settings">
                 <p>Work session length</p>
-                <button id="btn-wl-min">-</button>
-                <span id="work-length" class="work-length"></span>
-                <span>Min</span>
-                <button id="btn-wl-plus">+</button>
+                <p class="mt-0"><span id="work-length"></span>
+                <span>Min</span></p>
             </div>
             <div id="pause-settings">
                 <p>Break length</p>
-                <button id="btn-pl-min">-</button>
-                <span id="pause-length" class="pause-length"></span>
-                <span>Min</span>
-                <button id="btn-pl-plus">+</button>
+                <input id="range-pause" type="range" min="1" max="60" step="1">
+                <p class="mt-0"><span id="pause-length"></span>
+                <span>Min</span></p>
             </div>
             <div>
                 <p>Extended break every</p>
-                <button id="btn-ee-min">-</button>
-                <span id="extended-every"></span>
-                <span>sessions</span>
-                <button id="btn-ee-plus">+</button>
+                <input id="range-extended" type="range" min="1" max="10" step="1">
+                <p class="mt-0"><span id="extended-every"></span>
+                <span>sessions</span></p>
             </div>
         </div>
     </div>

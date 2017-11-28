@@ -16,6 +16,9 @@ const counterElem = document.getElementById('counter')
 const workLengthElem = document.getElementById('work-length')
 const pauseLengthElem = document.getElementById('pause-length')
 const extendedEveryElem = document.getElementById('extended-every')
+const workRangeElem = document.getElementById('range-work')
+const pauseRangeElem = document.getElementById('range-pause')
+const extendedRangeElem = document.getElementById('range-extended')
 
 function updateCounter(nextBuzz, sessionLength, counterElem) {
     const timeLeft = Math.round((nextBuzz - Date.now()) / 1000)
@@ -141,49 +144,28 @@ document.getElementById('btn-go-stop').addEventListener('click', function(event)
     updateBtn(state, goBtnElem)
 })
 
-document.getElementById('btn-wl-min').addEventListener('click', function(event) {
-    let currentLength = Number(workLengthElem.innerText)
-    if (currentLength > 1) {
-        workLength = currentLength - 1
-        workLengthElem.innerText = workLength
-    }
-})
-
-document.getElementById('btn-wl-plus').addEventListener('click', function(event) {
-    workLength = Number(workLengthElem.innerText) + 1
+workRangeElem.addEventListener('input', function(event) {
+    workLength = event.currentTarget.value
     workLengthElem.innerText = workLength
 })
 
-document.getElementById('btn-pl-min').addEventListener('click', function(event) {
-    let currentLength = Number(pauseLengthElem.innerText)
-    if (currentLength > 1) {
-        pauseLength = currentLength - 1
-        pauseLengthElem.innerText = pauseLength
-    }
-})
-
-document.getElementById('btn-pl-plus').addEventListener('click', function(event) {
-    pauseLength = Number(pauseLengthElem.innerText) + 1
+pauseRangeElem.addEventListener('input', function(event) {
+    pauseLength = event.currentTarget.value
     pauseLengthElem.innerText = pauseLength
 })
 
-document.getElementById('btn-ee-min').addEventListener('click', function(event) {
-    let currentVal = Number(extendedEveryElem.innerText)
-    if (currentVal > 1) {
-        extendedEvery = currentVal - 1
-        extendedEveryElem.innerText = extendedEvery
-    }
-})
-
-document.getElementById('btn-ee-plus').addEventListener('click', function(event) {
-    extendedEvery = Number(extendedEveryElem.innerText) + 1
+extendedRangeElem.addEventListener('input', function(event) {
+    extendedEvery = event.currentTarget.value
     extendedEveryElem.innerText = extendedEvery
 })
 
 // Start
 workLengthElem.innerText = workLength
+workRangeElem.value = workLength
 pauseLengthElem.innerText = pauseLength
+pauseRangeElem.value = pauseLength
 extendedEveryElem.innerText = extendedEvery
+extendedRangeElem.value = extendedEvery
 state.push('stop')
 setBg(state[state.length - 1], bodyElem)
 updateBtn(state, goBtnElem)
