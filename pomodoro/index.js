@@ -3,8 +3,8 @@
 // state can be 'stop', 'work', 'pause', 'extended'
 const state = []
 let counter
-let workLength = 2
-let pauseLength = 1
+let workLength = 25
+let pauseLength = 5
 let extendedEvery = 4
 
 // Dom elements
