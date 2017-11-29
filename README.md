@@ -13,4 +13,4 @@ These are my FreeCodeCamp Projects.
 
 ## Advanced Front end Development Projects
 * **Javascript Calculator**, a basic javascript calculator
-* **Pomodoro Timer**, a pomodoro technique timer, for organizing sessions of alternating work and pause
+* **Pomodoro Timer**, set a timer for your work sessions and take a break in between. You can set the length of the work and break sessions, as well as how often you want to have an extended break.
