@@ -18,8 +18,16 @@ body {
 
 .flex-center {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+    .flex-center {
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
 }
 
 .hidden {
