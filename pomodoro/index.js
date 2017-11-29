@@ -92,6 +92,8 @@ function updateBtn(state, goBtnElem) {
     const curState = state[state.length - 1]
     if (curState === 'stop') {
         goBtnElem.innerText = 'Go!'
+    } else if (curState === 'extended') {
+        goBtnElem.innerText = 'Extended Pause'
     } else {
         const title = curState.slice(0, 1).toUpperCase() + curState.slice(1)
         goBtnElem.innerText = title
@@ -123,6 +125,11 @@ function startWork() {
     setBg(state[state.length - 1], bodyElem)
 }
 
+function setLabel(labelElem, content, unit) {
+    labelElem.innerText = content === 1 ?
+        content + ' ' + unit : content + ' ' + unit + 's'
+}
+
 document.getElementById('btn-go-stop').addEventListener('mouseover', function(event) {
     if (state[state.length - 1] !== 'stop') {
         stopLblElem.classList.remove('hidden')
@@ -145,26 +152,26 @@ document.getElementById('btn-go-stop').addEventListener('click', function(event)
 })
 
 workRangeElem.addEventListener('input', function(event) {
-    workLength = event.currentTarget.value
-    workLengthElem.innerText = workLength
+    workLength = Number(event.currentTarget.value)
+    setLabel(workLengthElem, workLength, 'Minute')
 })
 
 pauseRangeElem.addEventListener('input', function(event) {
-    pauseLength = event.currentTarget.value
-    pauseLengthElem.innerText = pauseLength
+    pauseLength = Number(event.currentTarget.value)
+    setLabel(pauseLengthElem, pauseLength, 'Minute')
 })
 
 extendedRangeElem.addEventListener('input', function(event) {
-    extendedEvery = event.currentTarget.value
-    extendedEveryElem.innerText = extendedEvery
+    extendedEvery = Number(event.currentTarget.value)
+    setLabel(extendedEveryElem, extendedEvery, 'Session')
 })
 
 // Start
-workLengthElem.innerText = workLength
+setLabel(workLengthElem, workLength, 'Minute')
 workRangeElem.value = workLength
-pauseLengthElem.innerText = pauseLength
+setLabel(pauseLengthElem, pauseLength, 'Minute')
 pauseRangeElem.value = pauseLength
-extendedEveryElem.innerText = extendedEvery
+setLabel(extendedEveryElem, extendedEvery, 'Session')
 extendedRangeElem.value = extendedEvery
 state.push('stop')
 setBg(state[state.length - 1], bodyElem)

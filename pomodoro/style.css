@@ -56,8 +56,12 @@ body {
     transition: transform 0.8s;
 }
 
+.timer-digital {
+    margin-bottom: 1.4rem;
+}
+
 .btn-go-stop {
-    font-size: 3.6rem;
+    font-size: 3.2rem;
     position: absolute;
     top: 0;
     left: 0;
