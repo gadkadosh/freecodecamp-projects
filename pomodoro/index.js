@@ -6,6 +6,7 @@ let counter
 let workLength = 25
 let pauseLength = 5
 let extendedEvery = 4
+let skip = false
 
 // Dom elements
 const bodyElem = document.getElementsByTagName('body')[0]
@@ -19,14 +20,16 @@ const extendedEveryElem = document.getElementById('extended-every')
 const workRangeElem = document.getElementById('range-work')
 const pauseRangeElem = document.getElementById('range-pause')
 const extendedRangeElem = document.getElementById('range-extended')
+const skipBtnElem = document.getElementById('btn-skip')
 
 function updateCounter(nextBuzz, sessionLength, counterElem) {
     const timeLeft = Math.round((nextBuzz - Date.now()) / 1000)
-    if (timeLeft > 0) {
+    if (timeLeft > 0 && !skip) {
         // console.log('timer at:', timeLeft)
         counterElem.innerText = formatTime(timeLeft)
         updateAnalogTimer(timeLeft * 1000 / sessionLength, analogTimerElem, goBtnElem)
     } else {
+        skip = false
         window.clearInterval(counter)
         const curState = state[state.length - 1]
         let newNextBuzz
@@ -143,12 +146,19 @@ document.getElementById('btn-go-stop').addEventListener('mouseleave', function(e
 document.getElementById('btn-go-stop').addEventListener('click', function(event) {
     if (state[state.length - 1]  === 'stop') {
         startWork()
+        skipBtnElem.classList.remove('hidden')
     } else {
         window.clearInterval(counter)
         state.push('stop')
         setBg(state[state.length - 1], bodyElem)
+        skipBtnElem.classList.add('hidden')
     }
     updateBtn(state, goBtnElem)
+})
+
+document.getElementById('btn-skip').addEventListener('click', function(event) {
+    goBtnElem.innerText = "Skipping"
+    skip = true
 })
 
 workRangeElem.addEventListener('input', function(event) {

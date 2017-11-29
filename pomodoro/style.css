@@ -26,6 +26,14 @@ body {
     opacity: 0;
 }
 
+.btn-skip {
+    margin-top: 0.6rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
 .stop-label {
     font-size: 2rem;
     color: #555;
@@ -41,7 +49,6 @@ body {
     position: relative;
     height: 240px;
     width: 240px;
-    margin-bottom: 1rem;
 }
 
 .timer-analog {
