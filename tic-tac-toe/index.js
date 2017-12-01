@@ -29,8 +29,6 @@ const tiles = rows.reduce((acc, row) => {
 const gameStatusElem = document.getElementById('game-status')
 const startOverBtn = document.getElementById('start-over')
 
-console.log(tiles)
-
 function isGameWon(tiles) {
     const contentTiles = tiles.map(tile => tile.innerText)
     return winCombinations.find(c => {
@@ -77,24 +75,33 @@ function computerMove(tiles) {
         }
     }
 
-    const empty = tiles.filter(t => isTileEmpty(t))
-    console.log(empty)
-    const rank = empty.map((t, i) => {
-        winCombinations.reduce((acc, val) => {
-            if (val.includes(i)) {
+    // Calculate which tile has most continuation paths and choose it
+    // This doesn't take into account the current state of those tiles
+    // This already makes it practically impossible to win
+    const objTiles = tiles.map((tile, i) => ({ index: i, tile: tile }))
+    const empty = objTiles.filter(tile => isTileEmpty(tile.tile))
+    const rank = empty.map(tile => {
+        const paths = winCombinations.reduce((acc, val) => {
+            if (val.includes(tile.index)) {
                 return acc + 1
             }
             return acc
         }, 0)
+        return Object.assign({}, tile, { rank: paths })
     })
+    const bestChoice = rank.reduce((acc, val) => {
+        if (val.rank > acc.rank) return val
+        return acc
+    })
+    return bestChoice.index
 
     // 4. choose from a completely empty combination (random)
-    let choice
-    do {
-        choice = Math.floor(Math.random() * tiles.length)
-    } while (!isTileEmpty(tiles[choice]))
+    // let choice
+    // do {
+    //     choice = Math.floor(Math.random() * tiles.length)
+    // } while (!isTileEmpty(tiles[choice]))
 
-    return choice
+    // return choice
 }
 
 function isGameOver(tiles) {
