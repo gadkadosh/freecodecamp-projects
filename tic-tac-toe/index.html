@@ -8,6 +8,7 @@
 <body>
     <div class="board-container">
         <div id="board" class="board">
+            <!-- <div id="win-line" class="win-line"></div> -->
             <div class="board-row">
                 <div></div>
                 <div></div>
@@ -25,7 +26,10 @@
             </div>
         </div>
     </div>
-    <p id="game-status" class="game-status"></p>
+    <div class="status">
+        <p id="game-status" class="game-status"></p>
+        <button id="start-over" class="start-over-btn hidden">Start Over</button>
+    </div>
     <script src="index.js"></script>
 </body>
 </html>
