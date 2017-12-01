@@ -47,28 +47,52 @@ function drawLine(combination, tiles) {
 }
 
 function computerMove(tiles) {
+    // for each winning combination check the tiles:
+    // 1. if there is only one empty, check if other two are taken by player
+    for (let i = 0; i < winCombinations.length; i++) {
+        const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
+        const empty = combTiles.filter(t => isTileEmpty(t.tile))
+        if (empty.length === 1 &&
+            combTiles.filter(t => t.tile.innerText === O_SYM).length === 2) {
+            return empty[0].index
+        }
+    }
+    // 2. if nothing came out of that check again each winning combination tiles:
+    // computer has two and one is empty - take the empty and win
+    for (let i = 0; i < winCombinations.length; i++) {
+        const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
+        const empty = combTiles.filter(t => isTileEmpty(t.tile))
+        if (empty.length === 1 &&
+            combTiles.filter(t => t.tile.innerText === X_SYM).length === 2) {
+            return empty[0].index
+        }
+    }
+    // 3. computer has one and two are empty - take one of the empty ones
+    for (let i = 0; i < winCombinations.length; i++) {
+        const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
+        const empty = combTiles.filter(t => isTileEmpty(t.tile))
+        if (empty.length === 2 &&
+            combTiles.filter(t => t.tile.innerText === O_SYM).length === 1) {
+            return empty[Math.floor(Math.random() * 2)].index
+        }
+    }
+
+    const empty = tiles.filter(t => isTileEmpty(t))
+    console.log(empty)
+    const rank = empty.map((t, i) => {
+        winCombinations.reduce((acc, val) => {
+            if (val.includes(i)) {
+                return acc + 1
+            }
+            return acc
+        }, 0)
+    })
+
+    // 4. choose from a completely empty combination (random)
     let choice
     do {
         choice = Math.floor(Math.random() * tiles.length)
     } while (!isTileEmpty(tiles[choice]))
-
-    // for each winning combination check the tiles:
-    // 1. if there is only one empty, check if other two are taken by player
-    // 2. one for player two empty / all empty / all taken - ignore
-    // if nothing came out of that check again each winning combination tiles:
-    // 1. computer has two and one is empty - take the empty and win
-    // 2. computer has one and two are empty - take one of the empty ones
-    // 3. choose from a completely empty combination
-    // otherwise - it doesn't matter, can't win. (maybe block player)
-
-    winCombinations.forEach(comb => {
-        const combTiles = comb.map(i => tiles[i])
-        const empty = combTiles.filter(isTileEmpty)
-        if (empty.length === 1 &&
-            combTiles.filter(t => t.innerText === X_SYM).length === 2) {
-            console.log('danger!', combTiles)
-        }
-    })
 
     return choice
 }

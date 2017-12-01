@@ -2,6 +2,10 @@
     /* box-sizing: border-box; */
 }
 
+body {
+    background-color: orange;
+}
+
 .board-container {
     display: flex;
     justify-content: center;
@@ -11,16 +15,15 @@
 .board {
     height: 400px;
     width: 400px;
-    border-radius: 2px;
     overflow: hidden;
-    position: relative;
+    /* position: relative; */
 }
 
 .board-row {
     display: flex;
     height: 33.3%;
     width: 100%;
-    border-bottom: 2px solid #666;
+    border-bottom: 8px solid #666;
 }
 
 .board-row:last-child {
@@ -33,8 +36,7 @@
     align-items: center;
     width: 33.3%;
     flex-grow: 1;
-    background-color: orange;
-    border-right: 2px solid #666;
+    border-right: 8px solid #666;
     font-size: 6rem;
     cursor: default;
 }
@@ -61,25 +63,23 @@
 }
 
 .game-status {
-    margin-top: 1rem;
-    margin-bottom: 0.6rem;
+    margin-top: 1.6rem;
+    margin-bottom: 0.8rem;
     text-align: center;
     font-size: 2.6rem;
 }
 
+.hidden {
+    opacity: 0;
+}
+
 .start-over-btn {
     font-size: 1.4rem;
-    padding: 0.4rem 2.2rem;
-    border-radius: 8px;
-    border-color: #bbb;
-    background-color: #fa9c8d;
-    transition: 1s;
+    border-radius: 2px;
+    background-color: pink;
+    transition: 0.6s;
 }
 
 .start-over-btn:hover {
-    background-color: #FFBBAC;
-}
-
-.hidden {
-    opacity: 0;
+    background-color: 
 }
