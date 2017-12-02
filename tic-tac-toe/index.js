@@ -75,7 +75,7 @@ function computerMove(tiles) {
         }
     }
 
-    // Calculate which tile has most continuation paths and choose it
+    // 4. Calculate which tile has most continuation paths and choose it
     // This doesn't take into account the current state of those tiles
     // This already makes it practically impossible to win
     const objTiles = tiles.map((tile, i) => ({ index: i, tile: tile }))
@@ -94,14 +94,6 @@ function computerMove(tiles) {
         return acc
     })
     return bestChoice.index
-
-    // 4. choose from a completely empty combination (random)
-    // let choice
-    // do {
-    //     choice = Math.floor(Math.random() * tiles.length)
-    // } while (!isTileEmpty(tiles[choice]))
-
-    // return choice
 }
 
 function isGameOver(tiles) {
@@ -116,7 +108,7 @@ function updateGameStatus(tiles, gameStatusElem) {
         drawLine(won, tiles)
         playing = false
     } else if (isGameOver(tiles)) {
-        gameStatusElem.innerText = "Game Over"
+        gameStatusElem.innerText = "Game Over - it's a draw"
         playing = false
     } else if (currentPlayer === 'player') {
         gameStatusElem.innerText = "It's your turn"

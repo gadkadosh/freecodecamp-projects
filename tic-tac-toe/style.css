@@ -3,13 +3,13 @@
 }
 
 body {
-    background-color: orange;
+    background-color: #FFBA4D;
 }
 
 .board-container {
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
+    margin-top: 3rem;
 }
 
 .board {
@@ -23,7 +23,7 @@ body {
     display: flex;
     height: 33.3%;
     width: 100%;
-    border-bottom: 8px solid #666;
+    border-bottom: 8px solid #D79D43;
 }
 
 .board-row:last-child {
@@ -36,13 +36,19 @@ body {
     align-items: center;
     width: 33.3%;
     flex-grow: 1;
-    border-right: 8px solid #666;
+    border-right: 8px solid #D79D43;
     font-size: 6rem;
+    color: #3E2F15;
     cursor: default;
+    transition: 0.3s;
 }
 
 .board-row div:last-child {
     border: 0;
+}
+
+.board-row .win-tile {
+    color: red;
 }
 
 .win-line {
@@ -52,10 +58,6 @@ body {
     background-color: #333;
     height: 3px;
     width: 300px;
-}
-
-.win-tile {
-    color: red;
 }
 
 .status {
@@ -74,12 +76,14 @@ body {
 }
 
 .start-over-btn {
+    padding: 0.3rem 2rem;
     font-size: 1.4rem;
-    border-radius: 2px;
-    background-color: pink;
-    transition: 0.6s;
+    border: 0;
+    border-radius: 4px;
+    background-color: #9B90C0;
+    transition: 0.4s;
 }
 
 .start-over-btn:hover {
-    background-color: 
+    background-color: #BAACE6;
 }
