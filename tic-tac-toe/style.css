@@ -1,9 +1,14 @@
 * {
-    /* box-sizing: border-box; */
+    box-sizing: border-box;
 }
 
 body {
     background-color: #FFBA4D;
+    font-family: 'Oswald', sans-serif;
+}
+
+button {
+    font-family: inherit;
 }
 
 .board-container {
