@@ -1,0 +1,145 @@
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: 'Oswald', sans-serif;
+    background-color: #FFBA4D;
+    transition: background 0.6s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+button {
+    font-family: inherit;
+}
+
+.bg-inactive {
+    background-color: #CD963D;
+}
+
+.game-container {
+    position: relative;
+}
+
+.board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fade {
+    opacity: 0.3;
+}
+
+.play-btn-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    transition: opacity 0.3s;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 400px;
+    overflow: hidden;
+}
+
+.board-row {
+    display: flex;
+    flex: 1 0;
+}
+
+.board-row:last-child {
+    border: 0;
+}
+
+.board-row div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0;
+    border-right: 8px solid #D79D43;
+    border-bottom: 8px solid #D79D43;
+    font-size: 6rem;
+    color: #3E2F15;
+    cursor: default;
+    transition: 0.6s;
+}
+
+.board-row div:last-child {
+    border-right: 0;
+}
+
+.board-row:last-child div {
+    border-bottom: 0;
+}
+
+.board-row .win-tile {
+    color: red;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.game-info {
+    position: absolute;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-size: 2.6rem;
+}
+
+.game-status {
+    margin-top: 0.6rem;
+    margin-bottom: 0;
+}
+
+.game-status:after {
+    content: '\00a0';
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.d-none {
+    display: none;
+}
+
+.btn {
+    width: 8rem;
+    font-size: 1.4rem;
+    border: 0;
+    border-radius: 4px;
+    transition: 0.6s;
+}
+
+.start-over-btn {
+    background-color: #B9AAED;
+}
+
+.start-over-btn:hover {
+    background-color: #CBBDF4;
+}
+
+.play-btn {
+    background-color: #ACA7FE;
+}
+
+.play-btn:hover {
+    background-color: #C0A6FF;
+}
