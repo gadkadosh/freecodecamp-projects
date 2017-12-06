@@ -14,6 +14,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 400px;
     height: 80vh;
 }
 
@@ -53,8 +54,10 @@ button {
 .board {
     display: flex;
     flex-direction: column;
-    height: 400px;
-    width: 400px;
+    max-height: 400px;
+    height: 100vw;
+    max-width: 400px;
+    width: 100vw;
     overflow: hidden;
 }
 
