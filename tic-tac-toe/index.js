@@ -1,8 +1,5 @@
 'use strict'
 
-const X_SYM = '𐌗'
-const O_SYM = '𐌏'
-
 const winCombinations = [
     [0, 1, 2],
     [3, 4, 5],
@@ -14,34 +11,43 @@ const winCombinations = [
     [2, 4, 6],
 ]
 
-const players = {}
-players[X_SYM] = 'Player'
-players[O_SYM] = 'Computer'
+const players = {
+    player1: {
+        symbol: '𐌗',
+    },
+    player2: {
+        symbol: '𐌏',
+    }
+}
 
-// currentPlayer can be 'player' or 'computer'
 let playing = false
-let currentPlayer = 'player'
+let currentPlayer
 
+const body = document.getElementsByTagName('body')[0]
 const rows = Array.from(document.getElementById('board').children)
 const tiles = rows.reduce((acc, row) => {
     return acc.concat(...row.children)
 }, [])
 const gameStatusElem = document.getElementById('game-status')
 const startOverBtn = document.getElementById('start-over')
+const playBtnContainer = document.getElementById('play-btn-container')
+const playXBtn = document.getElementById('play-x')
+const playOBtn = document.getElementById('play-o')
 
 function isGameWon(tiles) {
     const contentTiles = tiles.map(tile => tile.innerText)
-    return winCombinations.find(c => {
+    const combination = winCombinations.find(c => {
         return contentTiles[c[0]] !== '' &&
             contentTiles[c[0]] === contentTiles[c[1]] &&
             contentTiles[c[0]] === contentTiles[c[2]]
     })
-}
-
-function drawLine(combination, tiles) {
-    combination.forEach(c => {
-        tiles[c].classList.add('win-tile')
-    })
+    if (combination !== undefined) {
+        combination.forEach(c => {
+            tiles[c].classList.add('win-tile')
+        })
+        return true
+    }
+    return false
 }
 
 function computerMove(tiles) {
@@ -51,7 +57,7 @@ function computerMove(tiles) {
         const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
         const empty = combTiles.filter(t => isTileEmpty(t.tile))
         if (empty.length === 1 &&
-            combTiles.filter(t => t.tile.innerText === O_SYM).length === 2) {
+            combTiles.filter(t => t.tile.innerText === currentPlayer.symbol).length === 2) {
             return empty[0].index
         }
     }
@@ -61,7 +67,8 @@ function computerMove(tiles) {
         const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
         const empty = combTiles.filter(t => isTileEmpty(t.tile))
         if (empty.length === 1 &&
-            combTiles.filter(t => t.tile.innerText === X_SYM).length === 2) {
+            combTiles.filter(t => t.tile.innerText !== currentPlayer.symbol &&
+                !isTileEmpty(t.tile)).length === 2) {
             return empty[0].index
         }
     }
@@ -70,7 +77,7 @@ function computerMove(tiles) {
         const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
         const empty = combTiles.filter(t => isTileEmpty(t.tile))
         if (empty.length === 2 &&
-            combTiles.filter(t => t.tile.innerText === O_SYM).length === 1) {
+            combTiles.filter(t => t.tile.innerText === currentPlayer.symbol).length === 1) {
             return empty[Math.floor(Math.random() * 2)].index
         }
     }
@@ -102,27 +109,16 @@ function isGameOver(tiles) {
 
 function updateGameStatus(tiles, gameStatusElem) {
     const won = isGameWon(tiles)
-    if (won) {
-        const playerWon = players[tiles[won[0]].innerText]
-        gameStatusElem.innerText = playerWon + " won!"
-        drawLine(won, tiles)
-        playing = false
+    if (isGameWon(tiles)) {
+        gameStatusElem.innerText = currentPlayer.isComputer ? "Computer won!": "You won!"
     } else if (isGameOver(tiles)) {
-        gameStatusElem.innerText = "Game Over - it's a draw"
-        playing = false
-    } else if (currentPlayer === 'player') {
+        gameStatusElem.innerText = "Game over - it's a draw"
+    } else if (!currentPlayer.isComputer) {
         gameStatusElem.innerText = "It's your turn"
-    } else if (currentPlayer === 'computer') {
+    } else if (currentPlayer.isComputer) {
         gameStatusElem.innerText = "Computer's turn"
         const move = computerMove(tiles)
         fillTile(tiles[move])
-    }
-
-    // Hide start over button if board is empty
-    if (tiles.every(isTileEmpty)) {
-        startOverBtn.classList.add('hidden')
-    } else {
-        startOverBtn.classList.remove('hidden')
     }
 }
 
@@ -131,14 +127,26 @@ function isTileEmpty(tile) {
 }
 
 function fillTile(tile) {
-    if (currentPlayer === 'player') {
-        tile.innerText = X_SYM
-        currentPlayer = 'computer'
-    } else if (currentPlayer === 'computer') {
-        tile.innerText = O_SYM
-        currentPlayer = 'player'
+    tile.innerText = currentPlayer.symbol
+    if (isGameWon(tiles)) {
+        updateGameStatus(tiles, gameStatusElem)
+        playing = false
+        return
+    } else if (isGameOver(tiles)) {
+        updateGameStatus(tiles, gameStatusElem)
+        playing = false
+        return
+    } else if (currentPlayer === players.player1) {
+        currentPlayer = players.player2
+        gameStatusElem.innerText = "Computer's turn"
+    } else if (currentPlayer === players.player2) {
+        currentPlayer = players.player1
+        gameStatusElem.innerText = "It's your turn"
+    } 
+    
+    if (currentPlayer.isComputer) {
+        fillTile(tiles[computerMove(tiles)])
     }
-    updateGameStatus(tiles, gameStatusElem)
 }
 
 function clearBoard(tiles) {
@@ -148,26 +156,61 @@ function clearBoard(tiles) {
     })
 }
 
-function startGame() {
-    clearBoard(tiles)
-    playing = true
-
-    tiles.forEach((tile, i) => {
-        tile.addEventListener('click', function(event) {
-            if (!playing) return
-            if (!isTileEmpty(tile)) return
-            fillTile(tile)
+function fadeOutElem(elem) {
+    elem.addEventListener('transitionend', 
+        function transitionEnd(e) {
+            elem.removeEventListener('transitionend', transitionEnd)
+            elem.classList.add('d-none')
         })
-    })
+    elem.classList.add('hidden')
+}
 
-    startOverBtn.addEventListener('click', function(e) {
-        clearBoard(tiles)
-        currentPlayer = 'player'
-        playing = true
-        updateGameStatus(tiles, gameStatusElem)
-    })
+function fadeInElem(elem) {
+    elem.classList.remove('d-none')
+    elem.classList.remove('hidden')
+}
+
+function startGame() {
+    playing = true
+    currentPlayer = players.player1
+    body.classList.remove('bg-inactive')
+
+    fadeOutElem(playBtnContainer)
+    fadeInElem(startOverBtn)
 
     updateGameStatus(tiles, gameStatusElem)
 }
 
-startGame(tiles)
+function initGame() {
+    playing = false
+    gameStatusElem.innerText = ''
+    clearBoard(tiles)
+    body.classList.add('bg-inactive')
+
+    fadeOutElem(startOverBtn)
+    fadeInElem(playBtnContainer)
+}
+
+playXBtn.addEventListener('click', function(e) {
+    players.player1.isComputer = false
+    players.player2.isComputer = true
+    startGame(tiles)
+})
+
+playOBtn.addEventListener('click', function(e) {
+    players.player1.isComputer = true
+    players.player2.isComputer = false
+    startGame(tiles)
+})
+
+startOverBtn.addEventListener('click', initGame)
+
+tiles.forEach((tile, i) => {
+    tile.addEventListener('click', function(e) {
+        if (!playing) return
+        if (!isTileEmpty(tile)) return
+        fillTile(tile)
+    })
+})
+
+initGame()
