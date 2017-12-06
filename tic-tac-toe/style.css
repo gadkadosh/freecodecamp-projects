@@ -8,7 +8,8 @@ html {
 
 body {
     font-family: 'Oswald', sans-serif;
-    background-color: #FFBA4D;
+    color: #333;
+    background-color: #FFC66C;
     transition: background 0.6s;
     display: flex;
     justify-content: center;
@@ -74,7 +75,7 @@ button {
     border-right: 8px solid #D79D43;
     border-bottom: 8px solid #D79D43;
     font-size: 6rem;
-    color: #3E2F15;
+    color: #444;
     cursor: default;
     transition: 0.6s;
 }
@@ -121,25 +122,15 @@ button {
 }
 
 .btn {
-    width: 8rem;
-    font-size: 1.4rem;
+    padding: 0.2rem 2.4rem;
+    font-size: 1.6rem;
     border: 0;
     border-radius: 4px;
-    transition: 0.6s;
+    background-color: #9085F7;
+    color: #fff;
+    transition: 0.4s;
 }
 
-.start-over-btn {
-    background-color: #B9AAED;
-}
-
-.start-over-btn:hover {
+.btn:hover {
     background-color: #CBBDF4;
-}
-
-.play-btn {
-    background-color: #ACA7FE;
-}
-
-.play-btn:hover {
-    background-color: #C0A6FF;
 }

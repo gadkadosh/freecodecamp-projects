@@ -157,6 +157,8 @@ function clearBoard(tiles) {
 }
 
 function fadeOutElem(elem) {
+    if (elem.classList.contains('d-none') || elem.classList.contains('hidden')) return
+    console.log('hiding:', elem)
     elem.addEventListener('transitionend', 
         function transitionEnd(e) {
             elem.removeEventListener('transitionend', transitionEnd)
