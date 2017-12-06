@@ -20,7 +20,7 @@ const players = {
     }
 }
 
-let playing = false
+let playing
 let currentPlayer
 
 const body = document.getElementsByTagName('body')[0]
@@ -108,18 +108,15 @@ function isGameOver(tiles) {
     return tiles.filter(tile => isTileEmpty(tile)).length === 0
 }
 
-function updateGameStatus(tiles, gameStatusElem) {
-    const won = isGameWon(tiles)
-    if (isGameWon(tiles)) {
+function updateGameStatus(gameStatusElem, gameStatus) {
+    if (gameStatus === 'won') {
         gameStatusElem.innerText = currentPlayer.isComputer ? "Computer won!": "You won!"
-    } else if (isGameOver(tiles)) {
+    } else if (gameStatus === 'over') {
         gameStatusElem.innerText = "Game over - it's a draw"
-    } else if (!currentPlayer.isComputer) {
-        gameStatusElem.innerText = "It's your turn"
     } else if (currentPlayer.isComputer) {
         gameStatusElem.innerText = "Computer's turn"
-        const move = computerMove(tiles)
-        fillTile(tiles[move])
+    } else if (!currentPlayer.isComputer) {
+        gameStatusElem.innerText = "It's your turn"
     }
 }
 
@@ -129,23 +126,24 @@ function isTileEmpty(tile) {
 
 function fillTile(tile) {
     tile.innerText = currentPlayer.symbol
+
     if (isGameWon(tiles)) {
-        updateGameStatus(tiles, gameStatusElem)
+        updateGameStatus(gameStatusElem, 'won')
         playing = false
         return
     } else if (isGameOver(tiles)) {
-        updateGameStatus(tiles, gameStatusElem)
+        updateGameStatus(gameStatusElem, 'over')
         playing = false
         return
     } else if (currentPlayer === players.player1) {
         currentPlayer = players.player2
-        gameStatusElem.innerText = "Computer's turn"
     } else if (currentPlayer === players.player2) {
         currentPlayer = players.player1
-        gameStatusElem.innerText = "It's your turn"
     } 
-    
-    if (currentPlayer.isComputer) {
+
+    updateGameStatus(gameStatusElem)
+
+    if (playing && currentPlayer.isComputer) {
         fillTile(tiles[computerMove(tiles)])
     }
 }
@@ -169,6 +167,7 @@ function fadeOutElem(elem) {
 
 function fadeInElem(elem) {
     elem.classList.remove('d-none')
+    elem.offsetWidth        // Needed to force reflow between class additions
     elem.classList.remove('hidden')
 }
 
@@ -180,7 +179,11 @@ function startGame() {
     fadeOutElem(playBtnContainer)
     fadeInElem(startOverBtn)
 
-    updateGameStatus(tiles, gameStatusElem)
+    updateGameStatus(gameStatusElem)
+    
+    if (playing && currentPlayer.isComputer) {
+        fillTile(tiles[computerMove(tiles)])
+    }
 }
 
 function initGame() {
