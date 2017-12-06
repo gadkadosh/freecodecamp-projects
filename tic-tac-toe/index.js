@@ -20,7 +20,7 @@ const players = {
     }
 }
 
-let playing = false
+let playing
 let currentPlayer
 
 const body = document.getElementsByTagName('body')[0]
@@ -51,43 +51,44 @@ function isGameWon(tiles) {
 }
 
 function computerMove(tiles) {
-    // for each winning combination check the tiles:
+    // For each winning combination check the tiles:
+    const combTiles = winCombinations.map(comb =>
+        comb.map(index => ({ index: index, tile: tiles[index] })))
+    const empty = combTiles.map(comb =>
+        comb.filter(t => isTileEmpty(t.tile)))
+
     // 1. if there is only one empty, check if other two are taken by player
-    for (let i = 0; i < winCombinations.length; i++) {
-        const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
-        const empty = combTiles.filter(t => isTileEmpty(t.tile))
-        if (empty.length === 1 &&
-            combTiles.filter(t => t.tile.innerText === currentPlayer.symbol).length === 2) {
-            return empty[0].index
+    for (let i = 0; i < combTiles.length; i++) {
+        if (empty[i].length === 1 &&
+            combTiles[i].filter(t => t.tile.innerText === currentPlayer.symbol).length === 2) {
+            return empty[i][0].index
         }
     }
+
     // 2. if nothing came out of that check again each winning combination tiles:
     // computer has two and one is empty - take the empty and win
-    for (let i = 0; i < winCombinations.length; i++) {
-        const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
-        const empty = combTiles.filter(t => isTileEmpty(t.tile))
-        if (empty.length === 1 &&
-            combTiles.filter(t => t.tile.innerText !== currentPlayer.symbol &&
+    for (let i = 0; i < combTiles.length; i++) {
+        if (empty[i].length === 1 &&
+            combTiles[i].filter(t => t.tile.innerText !== currentPlayer.symbol &&
                 !isTileEmpty(t.tile)).length === 2) {
-            return empty[0].index
+            return empty[i][0].index
         }
     }
+
     // 3. computer has one and two are empty - take one of the empty ones
-    for (let i = 0; i < winCombinations.length; i++) {
-        const combTiles = winCombinations[i].map(index => ({ index: index, tile: tiles[index] }))
-        const empty = combTiles.filter(t => isTileEmpty(t.tile))
-        if (empty.length === 2 &&
-            combTiles.filter(t => t.tile.innerText === currentPlayer.symbol).length === 1) {
-            return empty[Math.floor(Math.random() * 2)].index
+    for (let i = 0; i < combTiles.length; i++) {
+        if (empty[i].length === 2 &&
+            combTiles[i].filter(t => t.tile.innerText === currentPlayer.symbol).length === 1) {
+            return empty[i][Math.floor(Math.random() * 2)].index
         }
     }
 
     // 4. Calculate which tile has most continuation paths and choose it
     // This doesn't take into account the current state of those tiles
-    // This already makes it practically impossible to win
+    // This makes it impossible to win the game!
     const objTiles = tiles.map((tile, i) => ({ index: i, tile: tile }))
-    const empty = objTiles.filter(tile => isTileEmpty(tile.tile))
-    const rank = empty.map(tile => {
+    const emptyTiles = objTiles.filter(tile => isTileEmpty(tile.tile))
+    const rank = emptyTiles.map(tile => {
         const paths = winCombinations.reduce((acc, val) => {
             if (val.includes(tile.index)) {
                 return acc + 1
@@ -107,18 +108,15 @@ function isGameOver(tiles) {
     return tiles.filter(tile => isTileEmpty(tile)).length === 0
 }
 
-function updateGameStatus(tiles, gameStatusElem) {
-    const won = isGameWon(tiles)
-    if (isGameWon(tiles)) {
+function updateGameStatus(gameStatusElem, gameStatus) {
+    if (gameStatus === 'won') {
         gameStatusElem.innerText = currentPlayer.isComputer ? "Computer won!": "You won!"
-    } else if (isGameOver(tiles)) {
+    } else if (gameStatus === 'over') {
         gameStatusElem.innerText = "Game over - it's a draw"
-    } else if (!currentPlayer.isComputer) {
-        gameStatusElem.innerText = "It's your turn"
     } else if (currentPlayer.isComputer) {
         gameStatusElem.innerText = "Computer's turn"
-        const move = computerMove(tiles)
-        fillTile(tiles[move])
+    } else if (!currentPlayer.isComputer) {
+        gameStatusElem.innerText = "It's your turn"
     }
 }
 
@@ -128,23 +126,24 @@ function isTileEmpty(tile) {
 
 function fillTile(tile) {
     tile.innerText = currentPlayer.symbol
+
     if (isGameWon(tiles)) {
-        updateGameStatus(tiles, gameStatusElem)
+        updateGameStatus(gameStatusElem, 'won')
         playing = false
         return
     } else if (isGameOver(tiles)) {
-        updateGameStatus(tiles, gameStatusElem)
+        updateGameStatus(gameStatusElem, 'over')
         playing = false
         return
     } else if (currentPlayer === players.player1) {
         currentPlayer = players.player2
-        gameStatusElem.innerText = "Computer's turn"
     } else if (currentPlayer === players.player2) {
         currentPlayer = players.player1
-        gameStatusElem.innerText = "It's your turn"
     } 
-    
-    if (currentPlayer.isComputer) {
+
+    updateGameStatus(gameStatusElem)
+
+    if (playing && currentPlayer.isComputer) {
         fillTile(tiles[computerMove(tiles)])
     }
 }
@@ -158,7 +157,6 @@ function clearBoard(tiles) {
 
 function fadeOutElem(elem) {
     if (elem.classList.contains('d-none') || elem.classList.contains('hidden')) return
-    console.log('hiding:', elem)
     elem.addEventListener('transitionend', 
         function transitionEnd(e) {
             elem.removeEventListener('transitionend', transitionEnd)
@@ -169,6 +167,7 @@ function fadeOutElem(elem) {
 
 function fadeInElem(elem) {
     elem.classList.remove('d-none')
+    elem.offsetWidth        // Needed to force reflow between class additions
     elem.classList.remove('hidden')
 }
 
@@ -180,7 +179,11 @@ function startGame() {
     fadeOutElem(playBtnContainer)
     fadeInElem(startOverBtn)
 
-    updateGameStatus(tiles, gameStatusElem)
+    updateGameStatus(gameStatusElem)
+    
+    if (playing && currentPlayer.isComputer) {
+        fillTile(tiles[computerMove(tiles)])
+    }
 }
 
 function initGame() {

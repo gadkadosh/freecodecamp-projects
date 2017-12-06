@@ -14,6 +14,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 400px;
     height: 80vh;
 }
 
@@ -47,14 +48,16 @@ button {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    transition: opacity 0.3s;
+    transition: opacity 0.4s;
 }
 
 .board {
     display: flex;
     flex-direction: column;
-    height: 400px;
-    width: 400px;
+    max-height: 400px;
+    height: 100vw;
+    max-width: 400px;
+    width: 100vw;
     overflow: hidden;
 }
 
@@ -128,7 +131,7 @@ button {
     border-radius: 4px;
     background-color: #9085F7;
     color: #fff;
-    transition: 0.4s;
+    transition: opacity 0.4s, background-color 0.4s;
 }
 
 .btn:hover {
