@@ -15,3 +15,4 @@ These are my FreeCodeCamp Projects.
 * **[Javascript Calculator](https://gadkadosh.github.io/freecodecamp-projects/js-calc/)**, a basic javascript calculator
 * **[Pomodoro Timer](https://gadkadosh.github.io/freecodecamp-projects/pomodoro/)**, set a timer for your work sessions and take a break in between. You can set the length of the work and break sessions, as well as how often you want to have an extended break.
 * **[Tic-Tac-Toe](https://gadkadosh.github.io/freecodecamp-projects/tic-tac-toe/)**, the classic Tic-Tac-Toe game, against the computer
+* **[Simon Game](https://gadkadosh.github.io/freecodecamp-projects/simon/)**, a reproduction of the Simon Game in HTML + CSS + JavaScript
