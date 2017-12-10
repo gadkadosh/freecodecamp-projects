@@ -4,6 +4,7 @@
 
 body {
     height: 100vh;
+    background-color: #333;
 }
 
 .game-container {
@@ -36,7 +37,12 @@ body {
 }
 
 .signal-btn:active {
-    filter: brightness(130%);
+    filter: brightness(200%);
+}
+
+.active {
+    filter: brightness(150%);
+    background-color: black;
 }
 
 .signal:last-child {
@@ -44,17 +50,17 @@ body {
 }
 
 .signal-1 {
-    background-color: #FF4263;
+    background-color: #D0334E;
 }
 
 .signal-2 {
-    background-color: #6B4DF5;
+    background-color: #5E43D5;
 }
 
 .signal-3 {
-    background-color: #00F800;
+    background-color: #0CC907;
 }
 
 .signal-4 {
-    background-color: #E8F000;
+    background-color: #C6CD08;
 }
