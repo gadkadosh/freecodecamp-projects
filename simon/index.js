@@ -19,7 +19,7 @@ const signals = {
     },
 }
 
-const sequence = []
+let sequence = []
 let userSeq = []
 let playingSeq = false
 
@@ -43,7 +43,7 @@ function animateSignal(signal) {
         setTimeout(() => {
             element.classList.remove('active')
             resolve()
-        }, 1500)
+        }, 1000)
     })
 }
 
@@ -96,6 +96,14 @@ function clickSignal(signal) {
     }
 }
 
+const initGame = function() {
+    // Initialize sounds
+    signals.signal_1.sound = new Audio('./simonSound1.mp3')
+    signals.signal_2.sound = new Audio('./simonSound2.mp3')
+    signals.signal_3.sound = new Audio('./simonSound3.mp3')
+    signals.signal_4.sound = new Audio('./simonSound4.mp3')
+}
+
 Object.keys(signals).forEach(sig => {
     signals[sig].element = document.getElementById(signals[sig].id)
     signals[sig].element.addEventListener('click', function(e) {
@@ -105,15 +113,13 @@ Object.keys(signals).forEach(sig => {
     })
 })
 
-function startGame() {
-    // Initialize sounds
-    signals.signal_1.sound = new Audio('./simonSound1.mp3')
-    signals.signal_2.sound = new Audio('./simonSound2.mp3')
-    signals.signal_3.sound = new Audio('./simonSound3.mp3')
-    signals.signal_4.sound = new Audio('./simonSound4.mp3')
-
+const startGame = function() {
+    sequence = []
+    userSeq = []
     addSigToSeq(randomSignal(signals))
     playSequence(sequence)
 }
 
-startGame()
+document.getElementById('start-btn').addEventListener('click', startGame)
+
+initGame()
