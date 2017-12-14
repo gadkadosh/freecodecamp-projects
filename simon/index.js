@@ -23,38 +23,38 @@ let sequence = []
 let userSeq = []
 let playingSeq = false
 
-function randomSignal(signals) {
+const randomSignal = function(signals) {
     const randomIndex = Math.floor(Math.random() * Object.keys(signals).length)
     // console.log(randomIndex)
     return signals[Object.keys(signals)[randomIndex]]
 }
 
-function addSigToSeq(newSignal) {
+const addSigToSeq = function(newSignal) {
     // const newSignal = randomSignal
     // console.log('clicked on:', newSignal)
     sequence.push(newSignal)
 }
 
-function animateSignal(signal) {
+const animateSignal = function(signal, className, duration, gap) {
     return new Promise((resolve, reject) => {
         const element = signal.element.querySelector('div')
         // console.log(element)
-        element.classList.add('active')
+        element.classList.add(className)
+        element.classList.remove('signal-btn')
         setTimeout(() => {
-            element.classList.remove('active')
-            resolve()
-        }, 1000)
+            element.classList.remove(className)
+            element.classList.add('signal-btn')
+            setTimeout(() => resolve(), gap)
+        }, duration)
     })
 }
 
-function playSound(signal) {
+const playSound = function(signal) {
     const audioPromise = signal.sound.play()
-    audioPromise.catch((error) => {
-        console.log(error)
-    })
+    audioPromise.catch(error => console.log(error))
 }
 
-function playSequence(sequence) {
+const playSequence = function(sequence) {
     // TODO: clicking on a tile should interrupt playing the sequence
     userSeq = []
     playingSeq = true
@@ -65,53 +65,35 @@ function playSequence(sequence) {
             return
         }
         const signal = sequence[sigIndex]
-        animateSignal(signal).then(() => {
+        playSound(signal)
+        return animateSignal(signal, 'active', 600, 200).then(() => {
             sigIndex++
             playNext()
         })
-        playSound(signal)
     }
-    playNext()
+    return playNext()
 }
 
-function compareSequence(userSeq, sequence) {
-    // This works because both userSeq and sequence point to the objects in 'signals'
+const compareSequence = function(userSeq, sequence) {
     return userSeq.every((sig, i) => sig === sequence[i])
 }
 
-function clickSignal(signal) {
+const clickSignal = function(signal) {
     // console.log(signal)
-    animateSignal(signal)
+    // animateSignal(signal)
     playSound(signal)
     if (compareSequence(userSeq.concat(signal), sequence)) {
         userSeq.push(signal)
         if (userSeq.length === sequence.length) {
             console.log('Correct!')
             addSigToSeq(randomSignal(signals))
-            playSequence(sequence)
+            setTimeout(() => playSequence(sequence), 800)
         }
     } else {
         console.log('Wrong!')
-        playSequence(sequence)
+        animateSignal(signal, 'wrong', 500, 800).then(() => playSequence(sequence))
     }
 }
-
-const initGame = function() {
-    // Initialize sounds
-    signals.signal_1.sound = new Audio('./simonSound1.mp3')
-    signals.signal_2.sound = new Audio('./simonSound2.mp3')
-    signals.signal_3.sound = new Audio('./simonSound3.mp3')
-    signals.signal_4.sound = new Audio('./simonSound4.mp3')
-}
-
-Object.keys(signals).forEach(sig => {
-    signals[sig].element = document.getElementById(signals[sig].id)
-    signals[sig].element.addEventListener('click', function(e) {
-        // TODO: clicking on a tile should interrupt playing the sequence
-        if (playingSeq) return
-        clickSignal(signals[sig])
-    })
-})
 
 const startGame = function() {
     sequence = []
@@ -120,6 +102,23 @@ const startGame = function() {
     playSequence(sequence)
 }
 
-document.getElementById('start-btn').addEventListener('click', startGame)
+const initGame = function() {
+    // Initialize sounds
+    signals.signal_1.sound = new Audio('./simonSound1.mp3')
+    signals.signal_2.sound = new Audio('./simonSound2.mp3')
+    signals.signal_3.sound = new Audio('./simonSound3.mp3')
+    signals.signal_4.sound = new Audio('./simonSound4.mp3')
+
+    Object.keys(signals).forEach(sig => {
+        signals[sig].element = document.getElementById(signals[sig].id)
+        signals[sig].element.addEventListener('click', function(e) {
+            // TODO: clicking on a tile should interrupt playing the sequence
+            if (playingSeq) return
+            clickSignal(signals[sig])
+        })
+    })
+
+    document.getElementById('start-btn').addEventListener('click', startGame)
+}
 
 initGame()
