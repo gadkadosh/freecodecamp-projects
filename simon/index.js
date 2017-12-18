@@ -3,25 +3,26 @@
 const signals = {
     signal_1: {
         id: 'signal-1',
-        sound: '',
+        soundFile: './simonSound1.mp3',
     },
     signal_2: {
         id: 'signal-2',
-        sound: '',
+        soundFile: './simonSound2.mp3',
     },
     signal_3: {
         id: 'signal-3',
-        sound: '',
+        soundFile: './simonSound3.mp3',
     },
     signal_4: {
         id: 'signal-4',
-        sound: '',
+        soundFile: './simonSound4.mp3',
     },
 }
 
 let sequence = []
 let userSeq = []
 let playingSeq = false
+let audioContext
 
 const randomSignal = function(signals) {
     const randomIndex = Math.floor(Math.random() * Object.keys(signals).length)
@@ -50,8 +51,10 @@ const animateSignal = function(signal, className, duration, gap) {
 }
 
 const playSound = function(signal) {
-    const audioPromise = signal.sound.play()
-    audioPromise.catch(error => console.log(error))
+    const source = audioContext.createBufferSource()
+    source.buffer = signal.soundBuffer
+    source.connect(audioContext.destination)
+    source.start(0)
 }
 
 const playSequence = function(sequence) {
@@ -104,10 +107,25 @@ const startGame = function() {
 
 const initGame = function() {
     // Initialize sounds
-    signals.signal_1.sound = new Audio('./simonSound1.mp3')
-    signals.signal_2.sound = new Audio('./simonSound2.mp3')
-    signals.signal_3.sound = new Audio('./simonSound3.mp3')
-    signals.signal_4.sound = new Audio('./simonSound4.mp3')
+    try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext
+        audioContext = new AudioContext()
+    } catch(error) {
+        console.log("Web Audio API not supported:", error)
+    }
+
+    Object.keys(signals).forEach(signalIndex => {
+        const signal = signals[signalIndex]
+        const request = new XMLHttpRequest()
+        request.open('GET', signal.soundFile, true)
+        request.responseType = 'arraybuffer'
+        request.onload = function() {
+            audioContext.decodeAudioData(request.response, function(buffer) {
+                signal.soundBuffer = buffer
+            })
+        }
+        request.send()
+    })
 
     Object.keys(signals).forEach(sig => {
         signals[sig].element = document.getElementById(signals[sig].id)

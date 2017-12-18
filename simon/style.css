@@ -45,10 +45,6 @@ body {
     filter: brightness(70%);
 }
 
-/* .signal-btn:active { */
-/*     filter: brightness(200%); */
-/* } */
-
 .active {
     filter: brightness(200%);
     background-color: black;
