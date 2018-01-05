@@ -22,7 +22,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 2.3s;
+    transition: opacity 0.6s;
 }
 
 .hide {
@@ -34,7 +34,10 @@ body {
 }
 
 .start-btn {
-    padding: 2.0rem 7.2rem;
+    /* padding: 2.0rem 7.2rem; */
+    max-width: 24rem;
+    width: 80%;
+    height: 8rem;
     font-family: cursive;
     font-size: 2.4rem;
     border-radius: 3px;
@@ -57,15 +60,18 @@ body {
 
 .game-board {
     display: flex;
-    height: 150px;
-    width: 800px;
+    flex-direction: column;
+    max-height: 420px;
+    height: 90%;
+    max-width: 800px;
+    width: 90%;
     justify-content: space-between;
 }
 
 .signal {
     flex: 1 0;
     border: 5px solid #eee;
-    border-right: 0;
+    border-bottom: 0;
 }
 
 .signal div {
@@ -87,7 +93,7 @@ body {
 }
 
 .signal:last-child {
-    border: 5px solid #eee;
+    border-bottom: 5px solid #eee;
 }
 
 .signal-1 {
@@ -105,3 +111,20 @@ body {
 .signal-4 {
     background-color: #C6CD08;
 }
+
+@media screen and (min-width: 420px) {
+    .game-board {
+        flex-direction: row;
+        height: 150px;
+    }
+
+    .signal {
+        border: 5px solid #eee;
+        border-right: 0;
+    }
+
+    .signal:last-child {
+        border: 5px solid #eee;
+    }
+}
+

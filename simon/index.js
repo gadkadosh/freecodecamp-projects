@@ -1,28 +1,5 @@
 'use strict'
 
-// const signals = {
-//     signal_1: {
-//         id: 'signal-1',
-//         // soundFile: './simonSound1.mp3',
-//         soundFile: './Piano.ff.F4.mp3',
-//     },
-//     signal_2: {
-//         id: 'signal-2',
-//         // soundFile: './simonSound2.mp3',
-//         soundFile: './Piano.ff.Bb4.mp3',
-//     },
-//     signal_3: {
-//         id: 'signal-3',
-//         // soundFile: './simonSound3.mp3',
-//         soundFile: './Piano.ff.C5.mp3',
-//     },
-//     signal_4: {
-//         id: 'signal-4',
-//         // soundFile: './simonSound4.mp3',
-//         soundFile: './Piano.ff.D5.mp3',
-//     },
-// }
-
 const signals = [
     {
         id: 'signal-1',
@@ -55,9 +32,8 @@ const randomSignal = function(signals) {
 }
 
 const addSigToSeq = function(newSignal) {
-    // const newSignal = randomSignal
-    // console.log('clicked on:', newSignal)
     sequence.push(newSignal)
+    console.log('Steps: ', sequence.length)
 }
 
 const animateSignal = function(signal, className, duration, gap) {
@@ -112,21 +88,24 @@ const clickSignal = function(signal) {
         userSeq.push(signal)
         if (userSeq.length === sequence.length) {
             console.log('Correct!')
-            addSigToSeq(randomSignal(signals))
-            setTimeout(() => playSequence(sequence), 1000)
+            setTimeout(() => {
+                addSigToSeq(randomSignal(signals))
+                playSequence(sequence)
+            }, 1000)
         }
     } else {
         console.log('Wrong!')
         // Have to make sure the player can't click another signal at this point
         playingSeq = true
-        animateSignal(signal, 'wrong', 500, 100).then(() => playSequence(sequence))
+        animateSignal(signal, 'wrong', 500, 100)
+            .then(() => playSequence(sequence))
     }
 }
 
 const startGame = function() {
     hideElem(document.getElementById('intro'))
         .then(() => new Promise(resolve => {
-            setTimeout(() => resolve(), 800)
+            setTimeout(() => resolve(), 600)
         }))
         .then(() => {
             sequence = []
