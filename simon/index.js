@@ -86,7 +86,7 @@ const playSequence = function(sequence) {
     userSeq = []
     playingSeq = true
     let sigIndex = 0
-    function playNext() {
+    const playNext = function() {
         if (sigIndex >= sequence.length) {
             playingSeq = false
             return
@@ -106,24 +106,28 @@ const compareSequence = function(userSeq, sequence) {
 }
 
 const clickSignal = function(signal) {
-    // console.log(signal)
-    // animateSignal(signal)
-    playSound(signal)
     if (compareSequence(userSeq.concat(signal), sequence)) {
+        playSound(signal)
+        animateSignal(signal, 'active', 600, 200)
         userSeq.push(signal)
         if (userSeq.length === sequence.length) {
             console.log('Correct!')
             addSigToSeq(randomSignal(signals))
-            setTimeout(() => playSequence(sequence), 800)
+            setTimeout(() => playSequence(sequence), 1000)
         }
     } else {
         console.log('Wrong!')
-        animateSignal(signal, 'wrong', 500, 800).then(() => playSequence(sequence))
+        // Have to make sure the player can't click another signal at this point
+        playingSeq = true
+        animateSignal(signal, 'wrong', 500, 100).then(() => playSequence(sequence))
     }
 }
 
 const startGame = function() {
     hideElem(document.getElementById('intro'))
+        .then(() => new Promise(resolve => {
+            setTimeout(() => resolve(), 800)
+        }))
         .then(() => {
             sequence = []
             userSeq = []
@@ -177,15 +181,6 @@ const initGame = function() {
             clickSignal(sig)
         })
     })
-
-    // Object.keys(signals).forEach(sig => {
-    //     signals[sig].element = document.getElementById(signals[sig].id)
-    //     signals[sig].element.addEventListener('click', function(e) {
-    //         // TODO: clicking on a tile should interrupt playing the sequence
-    //         if (playingSeq || !isPlaying) return
-    //         clickSignal(signals[sig])
-    //     })
-    // })
 
     document.getElementById('start-btn').addEventListener('click', startGame)
 }
