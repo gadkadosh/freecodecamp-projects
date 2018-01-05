@@ -1,28 +1,52 @@
 'use strict'
 
-const signals = {
-    signal_1: {
+// const signals = {
+//     signal_1: {
+//         id: 'signal-1',
+//         // soundFile: './simonSound1.mp3',
+//         soundFile: './Piano.ff.F4.mp3',
+//     },
+//     signal_2: {
+//         id: 'signal-2',
+//         // soundFile: './simonSound2.mp3',
+//         soundFile: './Piano.ff.Bb4.mp3',
+//     },
+//     signal_3: {
+//         id: 'signal-3',
+//         // soundFile: './simonSound3.mp3',
+//         soundFile: './Piano.ff.C5.mp3',
+//     },
+//     signal_4: {
+//         id: 'signal-4',
+//         // soundFile: './simonSound4.mp3',
+//         soundFile: './Piano.ff.D5.mp3',
+//     },
+// }
+
+const signals = [
+    {
         id: 'signal-1',
-        soundFile: './simonSound1.mp3',
+        soundFile: './Piano.ff.F4.mp3',
     },
-    signal_2: {
+    {
         id: 'signal-2',
-        soundFile: './simonSound2.mp3',
+        soundFile: './Piano.ff.Bb4.mp3',
     },
-    signal_3: {
+    {
         id: 'signal-3',
-        soundFile: './simonSound3.mp3',
+        soundFile: './Piano.ff.C5.mp3',
     },
-    signal_4: {
+    {
         id: 'signal-4',
-        soundFile: './simonSound4.mp3',
+        soundFile: './Piano.ff.D5.mp3',
     },
-}
+]
 
 let sequence = []
 let userSeq = []
 let playingSeq = false
 let audioContext
+let isPlaying = false
 
 const randomSignal = function(signals) {
     const randomIndex = Math.floor(Math.random() * Object.keys(signals).length)
@@ -99,10 +123,26 @@ const clickSignal = function(signal) {
 }
 
 const startGame = function() {
-    sequence = []
-    userSeq = []
-    addSigToSeq(randomSignal(signals))
-    playSequence(sequence)
+    hideElem(document.getElementById('intro'))
+        .then(() => {
+            sequence = []
+            userSeq = []
+            addSigToSeq(randomSignal(signals))
+            playSequence(sequence)
+            isPlaying = true
+        })
+}
+
+const hideElem = function(element) {
+    const transitionEndPromise = new Promise((resolve) => {
+        element.addEventListener('transitionend', event => {
+            resolve()
+        })
+        element.classList.add('hide')
+    })
+    return transitionEndPromise.then(() => {
+        element.classList.add('none')
+    })
 }
 
 const initGame = function() {
@@ -114,27 +154,38 @@ const initGame = function() {
         console.log("Web Audio API not supported:", error)
     }
 
-    Object.keys(signals).forEach(signalIndex => {
-        const signal = signals[signalIndex]
+    signals.forEach(sig => {
         const request = new XMLHttpRequest()
-        request.open('GET', signal.soundFile, true)
+        request.open('GET', sig.soundFile, true)
         request.responseType = 'arraybuffer'
         request.onload = function() {
             audioContext.decodeAudioData(request.response, function(buffer) {
-                signal.soundBuffer = buffer
+                sig.soundBuffer = buffer
             })
         }
         request.send()
     })
 
-    Object.keys(signals).forEach(sig => {
-        signals[sig].element = document.getElementById(signals[sig].id)
-        signals[sig].element.addEventListener('click', function(e) {
+    signals.map(sig => Object.assign(sig, {
+        element: document.getElementById(sig.id)
+    }))
+
+    signals.forEach(sig => {
+        sig.element.addEventListener('click', function(e) {
             // TODO: clicking on a tile should interrupt playing the sequence
-            if (playingSeq) return
-            clickSignal(signals[sig])
+            if (playingSeq || !isPlaying) return
+            clickSignal(sig)
         })
     })
+
+    // Object.keys(signals).forEach(sig => {
+    //     signals[sig].element = document.getElementById(signals[sig].id)
+    //     signals[sig].element.addEventListener('click', function(e) {
+    //         // TODO: clicking on a tile should interrupt playing the sequence
+    //         if (playingSeq || !isPlaying) return
+    //         clickSignal(signals[sig])
+    //     })
+    // })
 
     document.getElementById('start-btn').addEventListener('click', startGame)
 }
