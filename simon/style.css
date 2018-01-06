@@ -83,12 +83,12 @@ body {
 }
 
 .signal-btn:hover {
-    filter: brightness(95%);
+    filter: brightness(85%);
+    transition: filter 0.3s;
 }
 
 .active {
     filter: brightness(200%);
-    background-color: black;
 }
 
 .wrong {
