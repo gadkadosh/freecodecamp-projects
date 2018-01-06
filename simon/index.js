@@ -19,7 +19,7 @@ const signals = [
     },
 ]
 
-const WINSTEPS = 2
+const WINSTEPS = 10
 
 let sequence = []
 let userSeq = []
@@ -107,7 +107,7 @@ const clickSignal = function(signal) {
             if (sequence.length == WINSTEPS ||
                 (sequence.length > WINSTEPS &&
                 (sequence.length - WINSTEPS) % 5 === 0)) {
-                console.log('Game over!')
+                // console.log('Game over!')
                 pauseGame()
                 animatePromise.then(() => showGameOverScreen())
             } else {
@@ -252,6 +252,20 @@ const initGame = function() {
             if (playingSeq || !isPlaying) return
             clickSignal(signal)
         })
+    })
+
+    document.addEventListener('keydown', function(event) {
+        if (playingSeq || !isPlaying) return
+        switch (event.key) {
+            case "h":
+                return clickSignal(signals[0])
+            case "j":
+                return clickSignal(signals[1])
+            case "k":
+                return clickSignal(signals[2])
+            case "l":
+                return clickSignal(signals[3])
+        }
     })
 
     document.getElementById('strict-mode').addEventListener('click', toggleMode)
