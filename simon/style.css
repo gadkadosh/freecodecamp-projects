@@ -126,6 +126,7 @@ body {
 .steps-label {
     font-size: 1.6rem;
     color: #32078F;
+    padding: 1rem 8rem;
 }
 
 .steps-label:empty:before {
@@ -176,6 +177,10 @@ body {
 
     .signal:last-child {
         border: 5px solid #eee;
+    }
+
+    .steps-label {
+        padding: 1rem 4rem;
     }
 }
 

@@ -62,7 +62,6 @@ const playSound = function(signal) {
 }
 
 const playSequence = function(sequence) {
-    // TODO: clicking on a tile should interrupt playing the sequence
     userSeq = []
     playingSeq = true
     let sigIndex = 0
@@ -113,9 +112,17 @@ const clickSignal = function(signal) {
                 .then(() => playSequence(sequence))
         } else {
             isPlaying = false
+            stepsLabel.removeEventListener('mouseenter', showCounter)
+            stepsLabel.removeEventListener('mouseleave', hideCounter)
+            stepsLabel.removeEventListener('touchstart', showCounter)
+            stepsLabel.removeEventListener('touchend', hideCounter)
             const animatePromise = signals.map(sig =>
-                animateSignal(sig, 'wrong', 1200, 100))
-            Promise.all(animatePromise).then(() => fadeIn(intro, 1))
+                animateSignal(sig, 'wrong', 1000, 0))
+            Promise.all(animatePromise).then(() => {
+                signals.forEach(signal =>
+                    signal.element.querySelector('div').classList.remove('signal-btn'))
+                fadeIn(intro, 1)
+            })
         }
     }
 }
@@ -131,6 +138,11 @@ const startGame = function() {
             addSigToSeq(randomSignal(signals))
             playSequence(sequence)
             isPlaying = true
+            stepsLabel.addEventListener('mouseenter', showCounter)
+            stepsLabel.addEventListener('mouseleave', hideCounter)
+            stepsLabel.addEventListener('touchstart', showCounter)
+            stepsLabel.addEventListener('touchend', hideCounter)
+            signals.forEach(signal => signal.element.querySelector('div').classList.add('signal-btn'))
         })
 }
 
@@ -164,6 +176,14 @@ const fadeIn = function(element, duration) {
     }).then(() => element.style.transition = '')
 }
 
+const showCounter = function(event) {
+    fadeIn(stepsLabel, 2.0)
+}
+
+const hideCounter = function(event) {
+    fadeOut(stepsLabel, 2.4, false)
+}
+
 const initGame = function() {
     // Initialize sounds
     try {
@@ -191,21 +211,12 @@ const initGame = function() {
 
     signals.forEach(sig => {
         sig.element.addEventListener('click', function(e) {
-            // TODO: clicking on a tile should interrupt playing the sequence
             if (playingSeq || !isPlaying) return
             clickSignal(sig)
         })
     })
 
     document.getElementById('strict-mode').addEventListener('click', toggleMode)
-    stepsLabel.addEventListener('mouseenter', function() {
-        console.log('mouse enter')
-        fadeIn(stepsLabel, 2.0)
-    })
-    stepsLabel.addEventListener('mouseleave', function() {
-        console.log('mouse leave')
-        fadeOut(stepsLabel, 2.4, false)
-    })
     document.getElementById('start-btn').addEventListener('click', startGame)
 }
 
