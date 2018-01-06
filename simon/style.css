@@ -17,20 +17,45 @@ body {
     height: 100%;
 }
 
-.intro {
+.white-screen {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: rgba(255, 255, 255, 0.9);
+}
+
+.intro-screen {
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.intro-transition {
-    transition: opacity 0.6s;
+.game-over-screen {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-over-label {
+    font-family: 'Joti One', cursive;
+    text-align: center;
+    font-size: 5rem;
+}
+
+.game-over-btn-wrapper {
+    width: 100%;
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .hide {
@@ -41,10 +66,11 @@ body {
     display: none;
 }
 
-.start-btn {
+.option-btn {
     max-width: 24rem;
     width: 80%;
     height: 8rem;
+    margin: 1rem;
     font-family: 'Joti One', cursive;
     font-size: 2.4rem;
     border-radius: 3px;
@@ -144,7 +170,7 @@ body {
     background-color: #A0B0F1;
     color: #333;
     border-radius: 2px;
-    transition: background-color 0.1s, color 0.1s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .strict-mode:checked+label {
@@ -155,6 +181,10 @@ body {
 @media screen and (min-width: 640px) {
     body {
         height: 100vh;
+    }
+
+    .game-over-btn-wrapper {
+        flex-direction: row;
     }
 
     .game-container {

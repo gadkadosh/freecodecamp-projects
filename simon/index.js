@@ -19,6 +19,8 @@ const signals = [
     },
 ]
 
+const WINSTEPS = 2
+
 let sequence = []
 let userSeq = []
 let playingSeq = false
@@ -27,6 +29,9 @@ let isPlaying = false
 let strictMode = false
 
 const stepsLabel = document.getElementById('steps-label')
+const whiteScreen = document.getElementById('white-screen')
+const introScreen = document.getElementById('intro')
+const gameOverScreen = document.getElementById('game-over')
 
 const randomSignal = function(signals) {
     const randomIndex = Math.floor(Math.random() * Object.keys(signals).length)
@@ -48,7 +53,8 @@ const animateSignal = function(signal, className, duration, gap) {
         element.classList.remove('signal-btn')
         setTimeout(() => {
             element.classList.remove(className)
-            element.classList.add('signal-btn')
+            if (isPlaying)
+                element.classList.add('signal-btn')
             setTimeout(() => resolve(), gap)
         }, duration)
     })
@@ -88,20 +94,28 @@ const toggleMode = function(event) {
     strictMode = event.target.checked
     const labelEl = document.querySelector('#strict-mode+label')
     labelEl.innerText = event.target.checked
-        ? "Disable strict mode" : "Enable strict mode"
+        ? "Strict mode" : "Normal mode"
 }
 
 const clickSignal = function(signal) {
     if (compareSequence(userSeq.concat(signal), sequence)) {
         playSound(signal)
-        animateSignal(signal, 'active', 600, 200)
+        const animatePromise = animateSignal(signal, 'active', 600, 200)
         userSeq.push(signal)
         if (userSeq.length === sequence.length) {
-            console.log('Correct!')
-            setTimeout(() => {
-                addSigToSeq(randomSignal(signals))
-                playSequence(sequence)
-            }, 1000)
+            // console.log('Correct!')
+            if (sequence.length == WINSTEPS ||
+                (sequence.length > WINSTEPS &&
+                (sequence.length - WINSTEPS) % 5 === 0)) {
+                console.log('Game over!')
+                pauseGame()
+                animatePromise.then(() => showGameOverScreen())
+            } else {
+                setTimeout(() => {
+                    addSigToSeq(randomSignal(signals))
+                    playSequence(sequence)
+                }, 1000)
+            }
         }
     } else {
         console.log('Wrong!')
@@ -111,37 +125,61 @@ const clickSignal = function(signal) {
             animateSignal(signal, 'wrong', 500, 100)
                 .then(() => playSequence(sequence))
         } else {
-            isPlaying = false
-            stepsLabel.removeEventListener('mouseenter', showCounter)
-            stepsLabel.removeEventListener('mouseleave', hideCounter)
-            stepsLabel.removeEventListener('touchstart', showCounter)
-            stepsLabel.removeEventListener('touchend', hideCounter)
+            pauseGame()
             const animatePromise = signals.map(sig =>
                 animateSignal(sig, 'wrong', 1000, 0))
             Promise.all(animatePromise).then(() => {
-                signals.forEach(signal =>
-                    signal.element.querySelector('div').classList.remove('signal-btn'))
-                fadeIn(intro, 1)
+                // signals.forEach(signal =>
+                //     signal.element.querySelector('div').classList.remove('signal-btn'))
+                showIntro()
             })
         }
     }
 }
 
+const pauseGame = function() {
+    isPlaying = false
+    stepsLabel.removeEventListener('mouseenter', showCounter)
+    stepsLabel.removeEventListener('mouseleave', hideCounter)
+    stepsLabel.removeEventListener('touchstart', showCounter)
+    stepsLabel.removeEventListener('touchend', hideCounter)
+}
+
+const resumeGame = function() {
+    isPlaying = true
+    stepsLabel.addEventListener('mouseenter', showCounter)
+    stepsLabel.addEventListener('mouseleave', hideCounter)
+    stepsLabel.addEventListener('touchstart', showCounter)
+    stepsLabel.addEventListener('touchend', hideCounter)
+    addSigToSeq(randomSignal(signals))
+    playSequence(sequence)
+}
+
+const showIntro = function() {
+    introScreen.classList.remove('none')
+    gameOverScreen.classList.add('none')
+    return fadeIn(whiteScreen, 1)
+}
+
+const showGameOverScreen = function() {
+    introScreen.classList.add('none')
+    gameOverScreen.classList.remove('none')
+    document.getElementById('game-over-label').innerText = `You got ${sequence.length}!`
+    return fadeIn(whiteScreen, 1)
+}
+
+const hideWhiteScreen = function() {
+    return fadeOut(whiteScreen, 0.6)
+}
+
 const startGame = function() {
-    fadeOut(document.getElementById('intro'), 0.6)
-        .then(() => new Promise(resolve => {
+        hideWhiteScreen().then(() => new Promise(resolve => {
             setTimeout(() => resolve(), 600)
         }))
         .then(() => {
             sequence = []
             userSeq = []
-            addSigToSeq(randomSignal(signals))
-            playSequence(sequence)
-            isPlaying = true
-            stepsLabel.addEventListener('mouseenter', showCounter)
-            stepsLabel.addEventListener('mouseleave', hideCounter)
-            stepsLabel.addEventListener('touchstart', showCounter)
-            stepsLabel.addEventListener('touchend', hideCounter)
+            resumeGame()
             signals.forEach(signal => signal.element.querySelector('div').classList.add('signal-btn'))
         })
 }
@@ -209,15 +247,20 @@ const initGame = function() {
         element: document.getElementById(sig.id)
     }))
 
-    signals.forEach(sig => {
-        sig.element.addEventListener('click', function(e) {
+    signals.forEach(signal => {
+        signal.element.addEventListener('click', function(event) {
             if (playingSeq || !isPlaying) return
-            clickSignal(sig)
+            clickSignal(signal)
         })
     })
 
     document.getElementById('strict-mode').addEventListener('click', toggleMode)
     document.getElementById('start-btn').addEventListener('click', startGame)
+    document.getElementById('restart-btn').addEventListener('click', startGame)
+    document.getElementById('continue-btn').addEventListener('click',
+        function(event) {
+            hideWhiteScreen().then(() => resumeGame())
+        })
 }
 
 initGame()

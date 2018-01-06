@@ -9,8 +9,17 @@
 </head>
 <body>
     <div class="wrapper">
-        <div id="intro" class="intro">
-            <button id="start-btn" class="start-btn">Start Game</button>
+        <div id="white-screen" class="white-screen">
+            <div id="intro" class="intro-screen">
+                <button id="start-btn" class="option-btn">Start Game</button>
+            </div>
+            <div id="game-over" class="game-over-screen">
+                <span id="game-over-label" class="game-over-label"></span>
+                <div class="game-over-btn-wrapper">
+                    <button id="restart-btn" class="option-btn">Start Over</button>
+                    <button id="continue-btn" class="option-btn">Continue</button>
+                </div>
+            </div>
         </div>
         <div class="game-container">
             <div class="game-board">
@@ -32,7 +41,7 @@
             </div>
             <div class="section">
                 <input id="strict-mode" class="strict-mode" type="checkbox">
-                <label for="strict-mode">Enable strict mode</label>
+                <label for="strict-mode">Normal mode</label>
             </div>
         </div>
     </div>
