@@ -24,6 +24,9 @@ let userSeq = []
 let playingSeq = false
 let audioContext
 let isPlaying = false
+let strictMode = false
+
+const stepsLabel = document.getElementById('steps-label')
 
 const randomSignal = function(signals) {
     const randomIndex = Math.floor(Math.random() * Object.keys(signals).length)
@@ -34,6 +37,10 @@ const randomSignal = function(signals) {
 const addSigToSeq = function(newSignal) {
     sequence.push(newSignal)
     console.log('Steps: ', sequence.length)
+    stepsLabel.innerText = sequence.length === 1
+        ? sequence.length + " STEP" : sequence.length + " STEPS"
+    fadeIn(stepsLabel, 2.0)
+    setTimeout(() => fadeOut(stepsLabel, 2.4, false), 2000)
 }
 
 const animateSignal = function(signal, className, duration, gap) {
@@ -81,6 +88,14 @@ const compareSequence = function(userSeq, sequence) {
     return userSeq.every((sig, i) => sig === sequence[i])
 }
 
+const toggleMode = function(event) {
+    strictMode = event.target.checked
+    console.log(event.target.label)
+    const labelEl = document.querySelector('#strict-mode+label')
+    labelEl.innerText = event.target.checked
+        ? "Disable strict mode" : "Enable strict mode"
+}
+
 const clickSignal = function(signal) {
     if (compareSequence(userSeq.concat(signal), sequence)) {
         playSound(signal)
@@ -95,15 +110,23 @@ const clickSignal = function(signal) {
         }
     } else {
         console.log('Wrong!')
+        if (!strictMode) {
         // Have to make sure the player can't click another signal at this point
-        playingSeq = true
-        animateSignal(signal, 'wrong', 500, 100)
-            .then(() => playSequence(sequence))
+            playingSeq = true
+            animateSignal(signal, 'wrong', 500, 100)
+                .then(() => playSequence(sequence))
+        } else {
+            console.log('booom')
+            isPlaying = false
+            const animatePromise = signals.map(sig =>
+                animateSignal(sig, 'wrong', 1200, 100))
+            Promise.all(animatePromise).then(() => fadeIn(intro, 1))
+        }
     }
 }
 
 const startGame = function() {
-    hideElem(document.getElementById('intro'))
+    fadeOut(document.getElementById('intro'), 0.6)
         .then(() => new Promise(resolve => {
             setTimeout(() => resolve(), 600)
         }))
@@ -116,16 +139,28 @@ const startGame = function() {
         })
 }
 
-const hideElem = function(element) {
+const fadeOut = function(element, duration, dispNone = true) {
     const transitionEndPromise = new Promise((resolve) => {
-        element.addEventListener('transitionend', event => {
+        element.addEventListener('transitionend', function transitionCb(event) {
+            element.removeEventListener('transitionend', transitionCb)
             resolve()
         })
+        element.style.transition = `opacity ${duration}s`
+        element.offsetHeight
         element.classList.add('hide')
     })
     return transitionEndPromise.then(() => {
-        element.classList.add('none')
+        element.style.transition = ''
+        if (dispNone) element.classList.add('none')
     })
+}
+
+const fadeIn = function(element, duration) {
+    element.classList.add('hide')
+    element.classList.remove('none')
+    element.style.transition = `opacity ${duration}s`
+    element.offsetHeight
+    element.classList.remove('hide')
 }
 
 const initGame = function() {
@@ -161,6 +196,7 @@ const initGame = function() {
         })
     })
 
+    document.getElementById('strict-mode').addEventListener('click', toggleMode)
     document.getElementById('start-btn').addEventListener('click', startGame)
 }
 

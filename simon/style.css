@@ -6,6 +6,7 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #B89ABE;
+    font-family: sans-serif;
 }
 
 .wrapper {
@@ -22,6 +23,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.intro-transition {
     transition: opacity 0.6s;
 }
 
@@ -34,7 +38,6 @@ body {
 }
 
 .start-btn {
-    /* padding: 2.0rem 7.2rem; */
     max-width: 24rem;
     width: 80%;
     height: 8rem;
@@ -110,6 +113,46 @@ body {
 
 .signal-4 {
     background-color: #C6CD08;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+.steps-label {
+    font-size: 1.6rem;
+    color: #32078F;
+    margin-bottom: 2.4rem;
+}
+
+.steps-label:empty:before {
+    content: "\200b";
+}
+
+.strict-mode {
+    display: none;
+}
+
+.strict-mode+label {
+    font-size: 1.2rem;
+    padding: 0.6rem 1.6rem;
+    background-color: #A0B0F1;
+    color: #333;
+    border-radius: 2px;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+.strict-mode:checked+label {
+    color: #FBFBFB;
+    background-color: #F61E2E;
 }
 
 @media screen and (min-width: 420px) {
