@@ -111,6 +111,7 @@ const clickSignal = function(signal) {
                 pauseGame()
                 animatePromise.then(() => showGameOverScreen())
             } else {
+                playingSeq = true
                 setTimeout(() => {
                     addSigToSeq(randomSignal(signals))
                     playSequence(sequence)
